@@ -1,4 +1,6 @@
-
+# RILEY CHANGES
+Some VFs seem to blank out a bunch of the capacity stuff KSMBD uses for InfiniBand detection. 
+Also; doesn't compile against MLNX/DOCA_OFED DKMS drivers. This fixes that by compiling against the DKMS tree and using the correct driver calls.
 # Content
 
 - [What is KSMBD?](#KSMBDwhat-is-ksmbd)
