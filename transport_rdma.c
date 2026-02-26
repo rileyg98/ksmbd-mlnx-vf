@@ -17,7 +17,7 @@
 #include <rdma/ib_verbs.h>
 #include <rdma/rdma_cm.h>
 #include <rdma/rw.h>
-
+#include <linux/workqueue.h>
 #include "connection.h"
 #include "glob.h"
 #include "smb_common.h"
@@ -380,9 +380,9 @@ static void free_transport(struct smb_direct_transport *t) {
   ksmbd_debug(RDMA, "wait for all send posted to IB to finish\n");
   wait_event(t->wait_send_pending, atomic_read(&t->send_pending) == 0);
 
-  disable_work_sync(&t->disconnect_work);
-  disable_work_sync(&t->post_recv_credits_work);
-  disable_work_sync(&t->send_immediate_work);
+  cancel_work_sync(&t->disconnect_work);
+  cancel_work_sync(&t->post_recv_credits_work);
+  cancel_work_sync(&t->send_immediate_work);
 
   if (t->qp) {
     ib_drain_qp(t->qp);
@@ -1650,16 +1650,29 @@ smb_direct_get_max_fr_pages(struct smb_direct_transport *t) {
 
 static int smb_direct_init_params(struct smb_direct_transport *t,
                                   struct ib_qp_cap *cap) {
-  struct ib_device *device = t->cm_id->device;
   int max_send_sges, max_rw_wrs, max_send_wrs;
   unsigned int max_sge_per_wr, wrs_per_credit;
+  struct ib_device_attr live_attrs;
   struct ib_device_attr dev_attr;
+  int ret;
 
-  if (ib_query_device(device, &dev_attr)) {
-    pr_err("failed to query device attributes\n");
-    return -EINVAL;
+  /* Zero out our temporary struct */
+  memset(&live_attrs, 0, sizeof(live_attrs));
+
+  /* Instead of trusting the cached cm_id->device->attrs, 
+   * we force the driver (mlx5_ib) to report the live hardware stats, 
+   * passing NULL for the user-data pointer since we are in kernel space.
+   */
+  if (t->cm_id->device->ops.query_device) {
+          ret = t->cm_id->device->ops.query_device(t->cm_id->device, &live_attrs, NULL);
+          if (ret == 0) {
+                  ksmbd_debug(RDMA, "Successfully queried live hardware attributes!\n");
+                  /* Overwrite the broken cached attributes with the real ones */
+                  t->cm_id->device->attrs = live_attrs; 
+          }
   }
 
+  dev_attr = t->cm_id->device->attrs;
   /* need 3 more sge. because a SMB_DIRECT header, SMB2 header,
    * SMB2 response could be mapped.
    */
@@ -1683,8 +1696,8 @@ static int smb_direct_init_params(struct smb_direct_transport *t,
                                    (t->pages_per_rw_credit - 1) * PAGE_SIZE);
 
   max_sge_per_wr =
-      min_t(unsigned int, dev_attr.max_send_sge, dev_attr.max_sge_rd);
-  max_sge_per_wr = max_t(unsigned int, max_sge_per_wr, max_send_sges);
+      min_t(unsigned int, (unsigned int)dev_attr.max_send_sge, (unsigned int)dev_attr.max_sge_rd);
+  max_sge_per_wr = max_t(unsigned int, max_sge_per_wr, (unsigned int)max_send_sges);
   wrs_per_credit =
       max_t(unsigned int, 4,
             DIV_ROUND_UP(t->pages_per_rw_credit, max_sge_per_wr) + 1);
@@ -1983,10 +1996,17 @@ static int smb_direct_handle_connect_request(struct rdma_cm_id *new_cm_id) {
   struct smb_direct_transport *t;
   struct task_struct *handler;
   int ret;
-  struct ib_device_attr dev_attr;
+  struct ib_device_attr live_attrs;
+  memset(&live_attrs, 0, sizeof(live_attrs));
 
-  if (ib_query_device(new_cm_id->device, &dev_attr))
-    return -EINVAL;
+  if (new_cm_id->device->ops.query_device) {
+          ret = new_cm_id->device->ops.query_device(new_cm_id->device, &live_attrs, NULL);
+          if (ret == 0)
+                  new_cm_id->device->attrs = live_attrs; 
+  }
+
+  struct ib_device_attr dev_attr;
+  dev_attr = new_cm_id->device->attrs;
 
   if (!rdma_frwr_is_supported(&dev_attr)) {
     ksmbd_debug(RDMA,
@@ -2083,14 +2103,19 @@ static void smb_direct_ib_client_add(struct ib_device *ib_dev)
 #endif
 {
   struct smb_direct_device *smb_dev;
-  struct ib_device_attr dev_attr;
+  struct ib_device_attr live_attrs;
+  int ret;
 
-  if (ib_query_device(ib_dev, &dev_attr))
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
-    return 0;
-#else
-    return;
-#endif
+  memset(&live_attrs, 0, sizeof(live_attrs));
+
+  if (ib_dev->ops.query_device) {
+          ret = ib_dev->ops.query_device(ib_dev, &live_attrs, NULL);
+          if (ret == 0)
+                  ib_dev->attrs = live_attrs; 
+  }
+
+  struct ib_device_attr dev_attr;
+  dev_attr = ib_dev->attrs;
 
   if (!rdma_frwr_is_supported(&dev_attr))
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
@@ -2231,9 +2256,19 @@ out:
     ibdev = ib_device_get_by_netdev(netdev, RDMA_DRIVER_UNKNOWN);
     if (ibdev) {
       struct ib_device_attr dev_attr;
+      struct ib_device_attr live_attrs;
+      int ret;
 
-      if (!ib_query_device(ibdev, &dev_attr))
-        rdma_capable = rdma_frwr_is_supported(&dev_attr);
+      memset(&live_attrs, 0, sizeof(live_attrs));
+
+      if (ibdev->ops.query_device) {
+              ret = ibdev->ops.query_device(ibdev, &live_attrs, NULL);
+              if (ret == 0)
+                      ibdev->attrs = live_attrs; 
+      }
+
+      dev_attr = ibdev->attrs;
+      rdma_capable = rdma_frwr_is_supported(&dev_attr);
       ib_device_put(ibdev);
     }
   }
