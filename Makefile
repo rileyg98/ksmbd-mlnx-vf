@@ -35,6 +35,8 @@ ksmbd-$(CONFIG_SMB_INSECURE_SERVER) += smb1pdu.o smb1ops.o smb1misc.o netmisc.o
 ksmbd-$(CONFIG_SMB_SERVER_SMBDIRECT) += transport_rdma.o
 else
 # For external module build
+EXTRA_CFLAGS+="-I/usr/src/ofa_kernel-dkms/$arch/$kernelver/include"
+KBUILD_EXTRA_SYMBOLS="/usr/src/ofa_kernel-dkms/$arch/$kernelver/Module.symvers"
 EXTRA_FLAGS += -I$(PWD)
 KDIR	?= /lib/modules/$(shell uname -r)/build
 MDIR	?= /lib/modules/$(shell uname -r)
