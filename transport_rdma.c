@@ -2285,6 +2285,7 @@ bool ksmbd_rdma_capable_netdev(struct net_device *netdev) {
 
   /* check if netdev is IPoIB safely without layer violation */
   if (netdev->type == ARPHRD_INFINIBAND)
+  
     return true;
 
   if (ksmbd_find_rdma_capable_netdev(netdev))
