@@ -42,6 +42,9 @@ PWD	:= $(shell pwd)
 PWD	:= $(shell pwd)
 
 export CONFIG_SMB_SERVER := m
+# TODO: Switch these if ofa_kernel-dkms exists, they enable Mellanox OFED support
+EXTRA_CFLAGS+="-I/usr/src/ofa_kernel-dkms/$arch/$kernelver/include"
+KBUILD_EXTRA_SYMBOLS="/usr/src/ofa_kernel-dkms/$arch/$kernelver/Module.symvers"
 
 all:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules

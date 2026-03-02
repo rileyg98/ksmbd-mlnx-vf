@@ -1,0 +1,9 @@
+*.o
+*.cmd
+*.ko
+*.asn1.o.cmd
+*.asn1.o
+*.asn1.h
+*.asn1.c
+*.o.d
+*.mod
