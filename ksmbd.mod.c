@@ -1,20 +1,7 @@
 #include <linux/module.h>
-#define INCLUDE_VERMAGIC
-#include <linux/build-salt.h>
-#include <linux/elfnote-lto.h>
 #include <linux/export-internal.h>
-#include <linux/vermagic.h>
 #include <linux/compiler.h>
 
-#ifdef CONFIG_UNWINDER_ORC
-#include <asm/orc_header.h>
-ORC_HEADER;
-#endif
-
-BUILD_SALT;
-BUILD_LTO_INFO;
-
-MODULE_INFO(vermagic, VERMAGIC_STRING);
 MODULE_INFO(name, KBUILD_MODNAME);
 
 __visible struct module __this_module
@@ -27,659 +14,983 @@ __section(".gnu.linkonce.this_module") = {
 	.arch = MODULE_ARCH_INIT,
 };
 
-#ifdef CONFIG_RETPOLINE
-MODULE_INFO(retpoline, "Y");
-#endif
 
 
+static const struct modversion_info ____versions[]
+__used __section("__versions") = {
+	{ 0x38f55934, "netdev_lower_get_next" },
+	{ 0x0e37bdfe, "in6addr_any" },
+	{ 0x2c7cd2bb, "ib_mr_pool_destroy" },
+	{ 0xc45d298e, "is_vmalloc_addr" },
+	{ 0x193de61d, "vfs_fsync_range" },
+	{ 0xd98156e2, "ida_alloc_range" },
+	{ 0x3cdb811e, "vfs_removexattr" },
+	{ 0xdc722415, "vfs_listxattr" },
+	{ 0xd272d446, "rtnl_unlock" },
+	{ 0xdb5c5ac9, "__init_rwsem" },
+	{ 0xa6117397, "ib_unregister_client" },
+	{ 0x4aaa39e4, "make_vfsgid" },
+	{ 0x33f8cae2, "vfs_setxattr" },
+	{ 0x21da5e66, "inode_to_bdi" },
+	{ 0x5d088c7e, "notify_change" },
+	{ 0x5244a5dc, "idr_find" },
+	{ 0xc463ae23, "vfs_getattr" },
+	{ 0x2182515b, "__num_online_cpus" },
+	{ 0xd272d446, "__rcu_read_lock" },
+	{ 0x4784bcc1, "rdma_rw_ctx_destroy" },
+	{ 0x178ab13a, "rdma_event_msg" },
+	{ 0x55d0ddea, "vfs_rename" },
+	{ 0x534ed5f3, "__msecs_to_jiffies" },
+	{ 0xd710adbf, "__kmalloc_noprof" },
+	{ 0x26a25e1b, "vmalloc_to_page" },
+	{ 0x4ccfaf9d, "netif_get_flags" },
+	{ 0x45741948, "lookup_one_unlocked" },
+	{ 0xa53f4e29, "memmove" },
+	{ 0x40a621c5, "snprintf" },
+	{ 0x65026e43, "complete" },
+	{ 0x49733ad6, "queue_work_on" },
+	{ 0xdd45951a, "sysfs_streq" },
+	{ 0xd272d446, "__SCT__preempt_schedule" },
+	{ 0x69c3e1d7, "__ib_alloc_pd" },
+	{ 0xca29c201, "iterate_dir" },
+	{ 0xc87f4bab, "finish_wait" },
+	{ 0x63af3ec1, "dma_unmap_page_attrs" },
+	{ 0xc0baf99d, "abort_creds" },
+	{ 0x9e54b291, "kernel_bind" },
+	{ 0x7a102c0a, "utf8_load" },
+	{ 0x5e505530, "set_freezable" },
+	{ 0xc9a23a75, "load_nls_default" },
+	{ 0xcf16fe6f, "current_time" },
+	{ 0xfa64599f, "genlmsg_put" },
+	{ 0xa53f4e29, "memcpy" },
+	{ 0x39687af5, "from_vfsuid" },
+	{ 0xcb8b6ec6, "kfree" },
+	{ 0xda44a623, "sprint_oid" },
+	{ 0x2dcaad8f, "ib_mr_pool_init" },
+	{ 0x3af8c33a, "follow_down" },
+	{ 0xe758f079, "sg_free_table_chained" },
+	{ 0xa15de243, "kern_path_create" },
+	{ 0x499ad459, "crypto_alloc_aead" },
+	{ 0xe53c6cf1, "groups_alloc" },
+	{ 0x0feb1e94, "usleep_range_state" },
+	{ 0x0db8d68d, "prepare_to_wait_event" },
+	{ 0xe2f59f75, "out_of_line_wait_on_bit" },
+	{ 0x8af51ca4, "crypto_aead_setauthsize" },
+	{ 0x5e505530, "kthread_should_stop" },
+	{ 0x8cc65d3d, "crypto_aead_decrypt" },
+	{ 0x8c3c2236, "do_splice_direct" },
+	{ 0x16ab4215, "__wake_up" },
+	{ 0x77c3296c, "kernel_accept" },
+	{ 0xfb3c09a7, "__module_get" },
+	{ 0x755821f2, "ib_event_msg" },
+	{ 0x8d0740ae, "kernel_recvmsg" },
+	{ 0x579b2279, "vfs_unlink" },
+	{ 0xde338d9a, "_raw_spin_lock" },
+	{ 0xe2878ef1, "mempool_free" },
+	{ 0x5bf86986, "vfs_truncate" },
+	{ 0x1e1918dc, "path_put" },
+	{ 0xa6ea08b6, "rdma_disconnect" },
+	{ 0xf0df46f5, "vfs_copy_file_range" },
+	{ 0xd272d446, "__fentry__" },
+	{ 0xdd6830c7, "sysfs_emit" },
+	{ 0x8864d0ea, "make_vfsuid" },
+	{ 0x4560dde6, "match_wildcard" },
+	{ 0x96cb1223, "__put_cred" },
+	{ 0x55e4af36, "utf8_casefold" },
+	{ 0x630dad60, "wake_up_process" },
+	{ 0x6078d3cd, "vfs_mkdir" },
+	{ 0x6edee96f, "dev_driver_string" },
+	{ 0x59ff564b, "vfs_statfs" },
+	{ 0x026921de, "crypto_destroy_tfm" },
+	{ 0x09dd69e9, "__refrigerator" },
+	{ 0x5a844b26, "__x86_indirect_thunk_rax" },
+	{ 0x85b48bd0, "dma_map_page_attrs" },
+	{ 0x44decd6f, "freezer_active" },
+	{ 0xe8213e80, "_printk" },
+	{ 0xde338d9a, "_raw_spin_lock_irq" },
+	{ 0x7735a9c7, "vfs_fallocate" },
+	{ 0x5629a063, "strncasecmp" },
+	{ 0xbd03ed67, "__ref_stack_chk_guard" },
+	{ 0xff7fbdd1, "___ratelimit" },
+	{ 0x6ac784f4, "schedule_timeout" },
+	{ 0xd272d446, "schedule" },
+	{ 0xd272d446, "__stack_chk_fail" },
+	{ 0xe1b99017, "__rdma_create_kernel_id" },
+	{ 0x2520ea93, "refcount_warn_saturate" },
+	{ 0x8ce83585, "queue_delayed_work_on" },
+	{ 0xaa79a60e, "load_nls" },
+	{ 0x37ff7a20, "make_kuid" },
+	{ 0x2a03d63d, "mnt_want_write" },
+	{ 0x9479a1e8, "strnlen" },
+	{ 0x95221fe6, "__alloc_skb" },
+	{ 0xba1a0f0c, "locks_init_lock" },
+	{ 0x38c8be28, "idr_get_next" },
+	{ 0xc3d759e3, "netlink_capable" },
+	{ 0x5a844b26, "__x86_indirect_thunk_rdx" },
+	{ 0x296b9459, "strrchr" },
+	{ 0xe38bfc70, "get_inode_acl" },
+	{ 0x29d12a64, "bit_wait" },
+	{ 0x0d428105, "init_task" },
+	{ 0xfb3c09a7, "module_put" },
+	{ 0x456d0688, "ib_device_get_by_netdev" },
+	{ 0x9452931d, "rdma_bind_addr" },
+	{ 0xd32f6fb8, "ib_register_client" },
+	{ 0x90a48d82, "__ubsan_handle_out_of_bounds" },
+	{ 0xbd03ed67, "page_offset_base" },
+	{ 0xd70733be, "sized_strscpy" },
+	{ 0xb917e1e9, "utf8_to_utf32" },
+	{ 0xf4c889da, "rdma_create_qp" },
+	{ 0x07d50c57, "idr_remove" },
+	{ 0xbe846f86, "putname" },
+	{ 0x83f301a1, "vfs_remove_acl" },
+	{ 0x46c12dd3, "kstrndup" },
+	{ 0xf437b04b, "mempool_alloc_noprof" },
+	{ 0xa41c6561, "crypto_aead_setkey" },
+	{ 0x240b1700, "__dma_sync_single_for_cpu" },
+	{ 0x41755ecf, "rdma_rw_ctx_wrs" },
+	{ 0x7a5ffe84, "init_wait_entry" },
+	{ 0x8fd1737a, "fput" },
+	{ 0xa59da3c0, "down_write" },
+	{ 0x7d240728, "init_net" },
+	{ 0xa59da3c0, "up_write" },
+	{ 0xf0d1e02d, "crypto_shash_setkey" },
+	{ 0x4c1e7250, "mempool_free_slab" },
+	{ 0xd272d446, "__rcu_read_unlock" },
+	{ 0x8cc65d3d, "crypto_aead_encrypt" },
+	{ 0xee3afd5d, "sk_skb_reason_drop" },
+	{ 0xa38f8c89, "kmemdup_nul" },
+	{ 0x6c4d0ef3, "netlink_unicast" },
+	{ 0x97c20d46, "xa_load" },
+	{ 0xbd03ed67, "random_kmalloc_seed" },
+	{ 0xd7a59a65, "vmalloc_noprof" },
+	{ 0xbde709c1, "kernel_sock_shutdown" },
+	{ 0x7b611b34, "idr_preload" },
+	{ 0xbeb1d261, "destroy_workqueue" },
+	{ 0x8bc8f40f, "crc32_le" },
+	{ 0x9e3a8e47, "_raw_write_lock" },
+	{ 0xf46d5bf3, "mutex_lock" },
+	{ 0xe6cb68a5, "kmem_cache_free" },
+	{ 0xa612b1b2, "crypto_shash_init" },
+	{ 0xa90f8f94, "posix_acl_alloc" },
+	{ 0x2435d559, "strncmp" },
+	{ 0x763a07b4, "__ib_alloc_cq" },
+	{ 0xde338d9a, "_raw_spin_unlock_irq" },
+	{ 0xd6d11a41, "nla_put" },
+	{ 0xa7942e26, "from_kgid" },
+	{ 0x2719b9fa, "const_current_task" },
+	{ 0xcced5636, "vfs_getxattr" },
+	{ 0xf8faa012, "kfree_sensitive" },
+	{ 0x5a844b26, "__x86_indirect_thunk_r13" },
+	{ 0x4c3d335e, "ida_free" },
+	{ 0xbd03ed67, "phys_base" },
+	{ 0x85e724f0, "rdma_listen" },
+	{ 0x5f3da7ba, "from_vfsgid" },
+	{ 0xa1dacb42, "class_unregister" },
+	{ 0x9e3a8e47, "_raw_read_unlock" },
+	{ 0x680628e7, "ktime_get_real_ts64" },
+	{ 0xe48f87bb, "rdma_destroy_qp" },
+	{ 0x9e3a8e47, "_raw_write_unlock" },
+	{ 0x402db74e, "memcmp" },
+	{ 0x4863e00c, "lock_sock_nested" },
+	{ 0x0571dc46, "kthread_stop" },
+	{ 0xc1e6c71e, "__mutex_init" },
+	{ 0x341ec23e, "set_posix_acl" },
+	{ 0xe54e0a6b, "__fortify_panic" },
+	{ 0xe199f25f, "jiffies_to_msecs" },
+	{ 0xc86552b8, "freezing_slow_path" },
+	{ 0xb82edfb3, "idr_alloc_cyclic" },
+	{ 0x9b4b48a0, "_ctype" },
+	{ 0x93236d39, "utf8_strncasecmp" },
+	{ 0x255dfd5a, "idr_destroy" },
+	{ 0x8ba052c7, "sock_set_reuseaddr" },
+	{ 0x8ef78c16, "locks_alloc_lock" },
+	{ 0x30d7a49c, "from_kuid" },
+	{ 0xdc84876e, "getname_kernel" },
+	{ 0x27683a56, "memset" },
+	{ 0x25b8a1d9, "kern_path" },
+	{ 0x9e100d51, "vfs_lock_file" },
+	{ 0x4b5cc7c5, "kernel_read" },
+	{ 0x65026e43, "wait_for_completion" },
+	{ 0x75251f3a, "mempool_alloc_slab" },
+	{ 0xd272d446, "__x86_return_thunk" },
+	{ 0xd2444fe9, "kmem_cache_alloc_noprof" },
+	{ 0x386e4ba3, "kmemdup_noprof" },
+	{ 0x5403c125, "__init_waitqueue_head" },
+	{ 0x0256e2dd, "make_kgid" },
+	{ 0xb5ac1c73, "__kmem_cache_create_args" },
+	{ 0xa7942e26, "from_kgid_munged" },
+	{ 0xec203997, "kasprintf" },
+	{ 0xe3a6b099, "unlock_rename" },
+	{ 0x7900efcf, "vfs_rmdir" },
+	{ 0xc5234ff0, "ib_destroy_cq_user" },
+	{ 0xaef1f20d, "system_long_wq" },
+	{ 0xa59da3c0, "down_read" },
+	{ 0x888b8f57, "strcmp" },
+	{ 0x5c0e69f5, "skb_trim" },
+	{ 0x303ede6c, "lookup_one_qstr_excl" },
+	{ 0xfd285498, "unregister_netdevice_notifier" },
+	{ 0x058c185a, "jiffies" },
+	{ 0x7f79e79a, "kthread_create_on_node" },
+	{ 0xba725cca, "mnt_drop_write" },
+	{ 0xce4af33b, "kstrdup" },
+	{ 0x97c20d46, "xa_erase" },
+	{ 0x478da5e6, "ib_wc_status_msg" },
+	{ 0xbd03ed67, "vmemmap_base" },
+	{ 0x1e1918dc, "path_get" },
+	{ 0x555ac535, "vfs_path_parent_lookup" },
+	{ 0x82fd7238, "__ubsan_handle_shift_out_of_bounds" },
+	{ 0x7ec472ba, "__preempt_count" },
+	{ 0xa2629db1, "kernel_listen" },
+	{ 0x04aae5b5, "ib_dma_virt_map_sg" },
+	{ 0xa4c0178c, "kvfree_call_rcu" },
+	{ 0xf1de9e85, "vfree" },
+	{ 0x6f5f0d82, "utf8_unload" },
+	{ 0xf4fea0c7, "vfs_fsync" },
+	{ 0xa5c7582d, "strsep" },
+	{ 0xf46d5bf3, "mutex_unlock" },
+	{ 0x94a00c08, "crypto_shash_finup" },
+	{ 0x85acaba2, "cancel_delayed_work_sync" },
+	{ 0x8d643b6c, "mempool_create_node_noprof" },
+	{ 0x67632a80, "sock_create_kern" },
+	{ 0xb15747c3, "ib_free_cq" },
+	{ 0xc9b96cf8, "groups_free" },
+	{ 0xe48f87bb, "rdma_destroy_id" },
+	{ 0x240b1700, "__dma_sync_single_for_device" },
+	{ 0xa66ba6c3, "init_user_ns" },
+	{ 0x3017bf34, "xa_destroy" },
+	{ 0x6ddb8302, "file_path" },
+	{ 0x3ceb0d81, "vfs_path_lookup" },
+	{ 0x09e9112f, "dentry_open" },
+	{ 0x1b18b841, "xa_find" },
+	{ 0x79ff0b65, "mempool_destroy" },
+	{ 0xc7aebaf5, "radix_tree_tagged" },
+	{ 0xc064623f, "__kmalloc_cache_noprof" },
+	{ 0x2d88a3ab, "cancel_work_sync" },
+	{ 0x75738bed, "__warn_printk" },
+	{ 0xfd285498, "register_netdevice_notifier" },
+	{ 0x8651dcf6, "rdma_accept" },
+	{ 0x366b3c2e, "dput" },
+	{ 0xba435eeb, "xa_store" },
+	{ 0x8295115f, "lockref_get" },
+	{ 0x71798f7e, "delayed_work_timer_fn" },
+	{ 0xa99c6e83, "lookup_noperm_unlocked" },
+	{ 0xdd1538f1, "utf16s_to_utf8s" },
+	{ 0x51541c40, "vfs_clone_file_range" },
+	{ 0x9e3a8e47, "_raw_read_lock" },
+	{ 0xbe416d65, "sock_release" },
+	{ 0x23ef80fb, "vfs_llseek" },
+	{ 0xd272d446, "rtnl_lock" },
+	{ 0x02f9bbf0, "timer_init_key" },
+	{ 0x224a53e7, "get_random_bytes" },
+	{ 0xf7b9b546, "tcp_sock_set_nodelay" },
+	{ 0x6597ddcb, "ib_drain_qp" },
+	{ 0x4a38c28c, "ib_dealloc_pd_user" },
+	{ 0xa81da433, "done_path_create" },
+	{ 0xf06a2271, "vfs_link" },
+	{ 0xfdbe36a2, "dma_unmap_sg_attrs" },
+	{ 0xc9b96cf8, "groups_sort" },
+	{ 0xa7e7ddcf, "genl_unregister_family" },
+	{ 0xa27365ac, "dget_parent" },
+	{ 0x30d7a49c, "from_kuid_munged" },
+	{ 0xa1183b62, "prepare_kernel_cred" },
+	{ 0x1b18b841, "xa_find_after" },
+	{ 0xdf4bee3d, "alloc_workqueue_noprof" },
+	{ 0x537fa818, "lock_rename_child" },
+	{ 0xd272d446, "rcu_barrier" },
+	{ 0x290e3119, "locks_delete_block" },
+	{ 0xe4de56b4, "__ubsan_handle_load_invalid_value" },
+	{ 0x43a349ca, "strlen" },
+	{ 0xe8e0a5a9, "wake_up_bit" },
+	{ 0x373ecd0f, "asn1_ber_decoder" },
+	{ 0x5fd7fc99, "inode_permission" },
+	{ 0xf1de9e85, "kvfree" },
+	{ 0x77936fe2, "ib_device_put" },
+	{ 0x296b9459, "strchr" },
+	{ 0x57cf3421, "crypto_alloc_shash" },
+	{ 0x7b7ce530, "genl_register_family" },
+	{ 0x23ef80fb, "generic_file_llseek" },
+	{ 0xde338d9a, "_raw_spin_unlock" },
+	{ 0x38ea0628, "sg_alloc_table_chained" },
+	{ 0xcc96ca62, "kernel_sendmsg" },
+	{ 0x27b873b8, "get_max_files" },
+	{ 0xf52f8b44, "__kvmalloc_node_noprof" },
+	{ 0x82445383, "strreplace" },
+	{ 0xc5308edd, "unload_nls" },
+	{ 0x296b9459, "strchrnul" },
+	{ 0xa59da3c0, "up_read" },
+	{ 0x4bc770a0, "class_register" },
+	{ 0x67b2ba98, "sysfs_emit_at" },
+	{ 0x0940597e, "utf8s_to_utf16s" },
+	{ 0x9cb91b7f, "sg_init_table" },
+	{ 0x65ef6b23, "sock_setsockopt" },
+	{ 0x67628f51, "msleep" },
+	{ 0xba1a0f0c, "locks_free_lock" },
+	{ 0xcb59f74f, "set_groups" },
+	{ 0x7851be11, "__SCT__might_resched" },
+	{ 0xfaabfe5e, "kmalloc_caches" },
+	{ 0x001e298b, "inode_set_ctime_to_ts" },
+	{ 0xfbe26b10, "krealloc_noprof" },
+	{ 0xdbb4ec87, "kernel_write" },
+	{ 0x1641838f, "kmem_cache_destroy" },
+	{ 0x8ba052c7, "release_sock" },
+	{ 0x6414e94b, "dma_map_sg_attrs" },
+	{ 0xaef1f20d, "system_wq" },
+	{ 0x4700a370, "d_path" },
+	{ 0x6d031b29, "vfs_create" },
+	{ 0x9bd51308, "rdma_rw_ctx_init" },
+	{ 0xbebe66ff, "module_layout" },
+};
 
-static const char ____versions[]
-__used __section("__versions") =
-	"\x20\x00\x00\x00\x12\x0d\x4f\x8e"
-	"netdev_lower_get_next\0\0\0"
-	"\x14\x00\x00\x00\x41\x20\x0b\x20"
+static const u32 ____version_ext_crcs[]
+__used __section("__version_ext_crcs") = {
+	0x38f55934,
+	0x0e37bdfe,
+	0x2c7cd2bb,
+	0xc45d298e,
+	0x193de61d,
+	0xd98156e2,
+	0x3cdb811e,
+	0xdc722415,
+	0xd272d446,
+	0xdb5c5ac9,
+	0xa6117397,
+	0x4aaa39e4,
+	0x33f8cae2,
+	0x21da5e66,
+	0x5d088c7e,
+	0x5244a5dc,
+	0xc463ae23,
+	0x2182515b,
+	0xd272d446,
+	0x4784bcc1,
+	0x178ab13a,
+	0x55d0ddea,
+	0x534ed5f3,
+	0xd710adbf,
+	0x26a25e1b,
+	0x4ccfaf9d,
+	0x45741948,
+	0xa53f4e29,
+	0x40a621c5,
+	0x65026e43,
+	0x49733ad6,
+	0xdd45951a,
+	0xd272d446,
+	0x69c3e1d7,
+	0xca29c201,
+	0xc87f4bab,
+	0x63af3ec1,
+	0xc0baf99d,
+	0x9e54b291,
+	0x7a102c0a,
+	0x5e505530,
+	0xc9a23a75,
+	0xcf16fe6f,
+	0xfa64599f,
+	0xa53f4e29,
+	0x39687af5,
+	0xcb8b6ec6,
+	0xda44a623,
+	0x2dcaad8f,
+	0x3af8c33a,
+	0xe758f079,
+	0xa15de243,
+	0x499ad459,
+	0xe53c6cf1,
+	0x0feb1e94,
+	0x0db8d68d,
+	0xe2f59f75,
+	0x8af51ca4,
+	0x5e505530,
+	0x8cc65d3d,
+	0x8c3c2236,
+	0x16ab4215,
+	0x77c3296c,
+	0xfb3c09a7,
+	0x755821f2,
+	0x8d0740ae,
+	0x579b2279,
+	0xde338d9a,
+	0xe2878ef1,
+	0x5bf86986,
+	0x1e1918dc,
+	0xa6ea08b6,
+	0xf0df46f5,
+	0xd272d446,
+	0xdd6830c7,
+	0x8864d0ea,
+	0x4560dde6,
+	0x96cb1223,
+	0x55e4af36,
+	0x630dad60,
+	0x6078d3cd,
+	0x6edee96f,
+	0x59ff564b,
+	0x026921de,
+	0x09dd69e9,
+	0x5a844b26,
+	0x85b48bd0,
+	0x44decd6f,
+	0xe8213e80,
+	0xde338d9a,
+	0x7735a9c7,
+	0x5629a063,
+	0xbd03ed67,
+	0xff7fbdd1,
+	0x6ac784f4,
+	0xd272d446,
+	0xd272d446,
+	0xe1b99017,
+	0x2520ea93,
+	0x8ce83585,
+	0xaa79a60e,
+	0x37ff7a20,
+	0x2a03d63d,
+	0x9479a1e8,
+	0x95221fe6,
+	0xba1a0f0c,
+	0x38c8be28,
+	0xc3d759e3,
+	0x5a844b26,
+	0x296b9459,
+	0xe38bfc70,
+	0x29d12a64,
+	0x0d428105,
+	0xfb3c09a7,
+	0x456d0688,
+	0x9452931d,
+	0xd32f6fb8,
+	0x90a48d82,
+	0xbd03ed67,
+	0xd70733be,
+	0xb917e1e9,
+	0xf4c889da,
+	0x07d50c57,
+	0xbe846f86,
+	0x83f301a1,
+	0x46c12dd3,
+	0xf437b04b,
+	0xa41c6561,
+	0x240b1700,
+	0x41755ecf,
+	0x7a5ffe84,
+	0x8fd1737a,
+	0xa59da3c0,
+	0x7d240728,
+	0xa59da3c0,
+	0xf0d1e02d,
+	0x4c1e7250,
+	0xd272d446,
+	0x8cc65d3d,
+	0xee3afd5d,
+	0xa38f8c89,
+	0x6c4d0ef3,
+	0x97c20d46,
+	0xbd03ed67,
+	0xd7a59a65,
+	0xbde709c1,
+	0x7b611b34,
+	0xbeb1d261,
+	0x8bc8f40f,
+	0x9e3a8e47,
+	0xf46d5bf3,
+	0xe6cb68a5,
+	0xa612b1b2,
+	0xa90f8f94,
+	0x2435d559,
+	0x763a07b4,
+	0xde338d9a,
+	0xd6d11a41,
+	0xa7942e26,
+	0x2719b9fa,
+	0xcced5636,
+	0xf8faa012,
+	0x5a844b26,
+	0x4c3d335e,
+	0xbd03ed67,
+	0x85e724f0,
+	0x5f3da7ba,
+	0xa1dacb42,
+	0x9e3a8e47,
+	0x680628e7,
+	0xe48f87bb,
+	0x9e3a8e47,
+	0x402db74e,
+	0x4863e00c,
+	0x0571dc46,
+	0xc1e6c71e,
+	0x341ec23e,
+	0xe54e0a6b,
+	0xe199f25f,
+	0xc86552b8,
+	0xb82edfb3,
+	0x9b4b48a0,
+	0x93236d39,
+	0x255dfd5a,
+	0x8ba052c7,
+	0x8ef78c16,
+	0x30d7a49c,
+	0xdc84876e,
+	0x27683a56,
+	0x25b8a1d9,
+	0x9e100d51,
+	0x4b5cc7c5,
+	0x65026e43,
+	0x75251f3a,
+	0xd272d446,
+	0xd2444fe9,
+	0x386e4ba3,
+	0x5403c125,
+	0x0256e2dd,
+	0xb5ac1c73,
+	0xa7942e26,
+	0xec203997,
+	0xe3a6b099,
+	0x7900efcf,
+	0xc5234ff0,
+	0xaef1f20d,
+	0xa59da3c0,
+	0x888b8f57,
+	0x5c0e69f5,
+	0x303ede6c,
+	0xfd285498,
+	0x058c185a,
+	0x7f79e79a,
+	0xba725cca,
+	0xce4af33b,
+	0x97c20d46,
+	0x478da5e6,
+	0xbd03ed67,
+	0x1e1918dc,
+	0x555ac535,
+	0x82fd7238,
+	0x7ec472ba,
+	0xa2629db1,
+	0x04aae5b5,
+	0xa4c0178c,
+	0xf1de9e85,
+	0x6f5f0d82,
+	0xf4fea0c7,
+	0xa5c7582d,
+	0xf46d5bf3,
+	0x94a00c08,
+	0x85acaba2,
+	0x8d643b6c,
+	0x67632a80,
+	0xb15747c3,
+	0xc9b96cf8,
+	0xe48f87bb,
+	0x240b1700,
+	0xa66ba6c3,
+	0x3017bf34,
+	0x6ddb8302,
+	0x3ceb0d81,
+	0x09e9112f,
+	0x1b18b841,
+	0x79ff0b65,
+	0xc7aebaf5,
+	0xc064623f,
+	0x2d88a3ab,
+	0x75738bed,
+	0xfd285498,
+	0x8651dcf6,
+	0x366b3c2e,
+	0xba435eeb,
+	0x8295115f,
+	0x71798f7e,
+	0xa99c6e83,
+	0xdd1538f1,
+	0x51541c40,
+	0x9e3a8e47,
+	0xbe416d65,
+	0x23ef80fb,
+	0xd272d446,
+	0x02f9bbf0,
+	0x224a53e7,
+	0xf7b9b546,
+	0x6597ddcb,
+	0x4a38c28c,
+	0xa81da433,
+	0xf06a2271,
+	0xfdbe36a2,
+	0xc9b96cf8,
+	0xa7e7ddcf,
+	0xa27365ac,
+	0x30d7a49c,
+	0xa1183b62,
+	0x1b18b841,
+	0xdf4bee3d,
+	0x537fa818,
+	0xd272d446,
+	0x290e3119,
+	0xe4de56b4,
+	0x43a349ca,
+	0xe8e0a5a9,
+	0x373ecd0f,
+	0x5fd7fc99,
+	0xf1de9e85,
+	0x77936fe2,
+	0x296b9459,
+	0x57cf3421,
+	0x7b7ce530,
+	0x23ef80fb,
+	0xde338d9a,
+	0x38ea0628,
+	0xcc96ca62,
+	0x27b873b8,
+	0xf52f8b44,
+	0x82445383,
+	0xc5308edd,
+	0x296b9459,
+	0xa59da3c0,
+	0x4bc770a0,
+	0x67b2ba98,
+	0x0940597e,
+	0x9cb91b7f,
+	0x65ef6b23,
+	0x67628f51,
+	0xba1a0f0c,
+	0xcb59f74f,
+	0x7851be11,
+	0xfaabfe5e,
+	0x001e298b,
+	0xfbe26b10,
+	0xdbb4ec87,
+	0x1641838f,
+	0x8ba052c7,
+	0x6414e94b,
+	0xaef1f20d,
+	0x4700a370,
+	0x6d031b29,
+	0x9bd51308,
+	0xbebe66ff,
+};
+static const char ____version_ext_names[]
+__used __section("__version_ext_names") =
+	"netdev_lower_get_next\0"
 	"in6addr_any\0"
-	"\x1c\x00\x00\x00\xdf\xc1\x92\x61"
-	"ib_mr_pool_destroy\0\0"
-	"\x18\x00\x00\x00\xce\xb0\x1d\xc3"
+	"ib_mr_pool_destroy\0"
 	"is_vmalloc_addr\0"
-	"\x14\x00\x00\x00\x2a\xc6\xdc\xc8"
-	"krealloc\0\0\0\0"
-	"\x18\x00\x00\x00\x42\x22\x41\xcf"
 	"vfs_fsync_range\0"
-	"\x18\x00\x00\x00\x73\x25\xa0\xe7"
 	"ida_alloc_range\0"
-	"\x18\x00\x00\x00\xc2\x94\x1b\x48"
 	"vfs_removexattr\0"
-	"\x18\x00\x00\x00\x3b\x68\x57\x93"
-	"vfs_listxattr\0\0\0"
-	"\x14\x00\x00\x00\xf2\x0f\x72\x6e"
+	"vfs_listxattr\0"
 	"rtnl_unlock\0"
-	"\x18\x00\x00\x00\x71\x60\x90\x1b"
-	"revert_creds\0\0\0\0"
-	"\x18\x00\x00\x00\xff\xa6\x4d\x7b"
-	"__init_rwsem\0\0\0\0"
-	"\x20\x00\x00\x00\xa7\xea\x5b\x92"
-	"ib_unregister_client\0\0\0\0"
-	"\x14\x00\x00\x00\x45\xb5\x4b\x0f"
+	"__init_rwsem\0"
+	"ib_unregister_client\0"
 	"make_vfsgid\0"
-	"\x18\x00\x00\x00\xed\x25\xcd\x49"
-	"alloc_workqueue\0"
-	"\x18\x00\x00\x00\xff\xc7\x8f\x50"
-	"vfs_setxattr\0\0\0\0"
-	"\x18\x00\x00\x00\xb7\xf1\x7f\x8d"
-	"inode_to_bdi\0\0\0\0"
-	"\x18\x00\x00\x00\xe7\x19\xbc\xd7"
-	"notify_change\0\0\0"
-	"\x14\x00\x00\x00\xb9\x8f\x97\x20"
-	"idr_find\0\0\0\0"
-	"\x14\x00\x00\x00\xf9\x21\x5a\x62"
+	"vfs_setxattr\0"
+	"inode_to_bdi\0"
+	"notify_change\0"
+	"idr_find\0"
 	"vfs_getattr\0"
-	"\x1c\x00\x00\x00\x20\x06\x0d\xc6"
-	"__num_online_cpus\0\0\0"
-	"\x18\x00\x00\x00\x14\x27\x52\x8d"
+	"__num_online_cpus\0"
 	"__rcu_read_lock\0"
-	"\x1c\x00\x00\x00\x0c\x2c\xe2\x90"
 	"rdma_rw_ctx_destroy\0"
-	"\x18\x00\x00\x00\x03\xf8\x7d\x90"
-	"rdma_event_msg\0\0"
-	"\x14\x00\x00\x00\x90\x9f\xf5\x27"
-	"vfs_rename\0\0"
-	"\x1c\x00\x00\x00\x8f\x18\x02\x7f"
-	"__msecs_to_jiffies\0\0"
-	"\x18\x00\x00\x00\xa8\xd5\x8d\xb1"
+	"rdma_event_msg\0"
+	"vfs_rename\0"
+	"__msecs_to_jiffies\0"
+	"__kmalloc_noprof\0"
 	"vmalloc_to_page\0"
-	"\x10\x00\x00\x00\xeb\x02\xe6\xb0"
+	"netif_get_flags\0"
+	"lookup_one_unlocked\0"
 	"memmove\0"
-	"\x14\x00\x00\x00\x6e\x4a\x6e\x65"
-	"snprintf\0\0\0\0"
-	"\x14\x00\x00\x00\x2f\x7a\x25\xa6"
-	"complete\0\0\0\0"
-	"\x18\x00\x00\x00\x36\xf2\xb6\xc5"
-	"queue_work_on\0\0\0"
-	"\x14\x00\x00\x00\xe2\x7c\x2e\x22"
+	"snprintf\0"
+	"complete\0"
+	"queue_work_on\0"
 	"sysfs_streq\0"
-	"\x20\x00\x00\x00\x2c\x8a\xd8\x48"
 	"__SCT__preempt_schedule\0"
-	"\x18\x00\x00\x00\xe9\x2f\x96\x77"
-	"__ib_alloc_pd\0\0\0"
-	"\x14\x00\x00\x00\xc9\xc7\xd5\x1e"
+	"__ib_alloc_pd\0"
 	"iterate_dir\0"
-	"\x14\x00\x00\x00\xbf\x0f\x54\x92"
 	"finish_wait\0"
-	"\x20\x00\x00\x00\x28\xb6\xfa\x09"
-	"dma_unmap_page_attrs\0\0\0\0"
-	"\x14\x00\x00\x00\x15\xef\x2a\x36"
+	"dma_unmap_page_attrs\0"
 	"abort_creds\0"
-	"\x14\x00\x00\x00\x22\xbd\x7e\x3f"
 	"kernel_bind\0"
-	"\x24\x00\x00\x00\xfa\x2f\x89\xc0"
-	"dma_sync_single_for_device\0\0"
-	"\x14\x00\x00\x00\x77\x71\x98\xd7"
-	"utf8_load\0\0\0"
-	"\x18\x00\x00\x00\x05\xbb\x61\x9e"
-	"set_freezable\0\0\0"
-	"\x1c\x00\x00\x00\xf8\x2e\x48\xfa"
-	"load_nls_default\0\0\0\0"
-	"\x18\x00\x00\x00\x86\xc3\x95\xe4"
-	"current_time\0\0\0\0"
-	"\x14\x00\x00\x00\xfc\xcf\x53\x03"
+	"utf8_load\0"
+	"set_freezable\0"
+	"load_nls_default\0"
+	"current_time\0"
 	"genlmsg_put\0"
-	"\x10\x00\x00\x00\x38\xdf\xac\x69"
-	"memcpy\0\0"
-	"\x14\x00\x00\x00\x74\xe4\x14\x79"
+	"memcpy\0"
 	"from_vfsuid\0"
-	"\x10\x00\x00\x00\xba\x0c\x7a\x03"
-	"kfree\0\0\0"
-	"\x14\x00\x00\x00\x66\x1b\x20\xfc"
-	"sprint_oid\0\0"
-	"\x14\x00\x00\x00\xcb\xf0\xb1\x7a"
-	"pcpu_hot\0\0\0\0"
-	"\x18\x00\x00\x00\x37\xf4\xe7\x78"
+	"kfree\0"
+	"sprint_oid\0"
 	"ib_mr_pool_init\0"
-	"\x14\x00\x00\x00\xcf\xb1\x39\xfb"
 	"follow_down\0"
-	"\x20\x00\x00\x00\x52\x1a\x6e\xa5"
-	"sg_free_table_chained\0\0\0"
-	"\x1c\x00\x00\x00\x4d\x66\x18\xe9"
-	"kern_path_create\0\0\0\0"
-	"\x1c\x00\x00\x00\xb2\x4b\x5d\x3d"
-	"crypto_alloc_aead\0\0\0"
-	"\x18\x00\x00\x00\xb7\xc0\xce\xbb"
-	"groups_alloc\0\0\0\0"
-	"\x1c\x00\x00\x00\x20\x5d\x05\xc3"
-	"usleep_range_state\0\0"
-	"\x20\x00\x00\x00\x95\xd4\x26\x8c"
-	"prepare_to_wait_event\0\0\0"
-	"\x20\x00\x00\x00\x21\xd4\x84\x19"
+	"sg_free_table_chained\0"
+	"kern_path_create\0"
+	"crypto_alloc_aead\0"
+	"groups_alloc\0"
+	"usleep_range_state\0"
+	"prepare_to_wait_event\0"
 	"out_of_line_wait_on_bit\0"
-	"\x20\x00\x00\x00\xde\xe3\x8e\xc5"
 	"crypto_aead_setauthsize\0"
-	"\x1c\x00\x00\x00\x6e\x64\xf7\xb3"
 	"kthread_should_stop\0"
-	"\x1c\x00\x00\x00\xd8\x91\x41\xfe"
 	"crypto_aead_decrypt\0"
-	"\x1c\x00\x00\x00\x59\x4e\xd3\x2b"
-	"do_splice_direct\0\0\0\0"
-	"\x14\x00\x00\x00\x44\x43\x96\xe2"
-	"__wake_up\0\0\0"
-	"\x18\x00\x00\x00\x98\x51\x63\x3e"
-	"kernel_accept\0\0\0"
-	"\x18\x00\x00\x00\x70\xbe\x69\xc3"
-	"__module_get\0\0\0\0"
-	"\x18\x00\x00\x00\x34\x33\xed\xf6"
-	"ib_event_msg\0\0\0\0"
-	"\x18\x00\x00\x00\x4c\x08\x04\x81"
-	"kernel_recvmsg\0\0"
-	"\x1c\x00\x00\x00\x9a\xac\x3e\x6a"
-	"kmem_cache_create\0\0\0"
-	"\x14\x00\x00\x00\x09\x80\xe2\x0f"
-	"vfs_unlink\0\0"
-	"\x18\x00\x00\x00\x64\xbd\x8f\xba"
-	"_raw_spin_lock\0\0"
-	"\x18\x00\x00\x00\xe7\xe3\x97\xa8"
-	"mempool_free\0\0\0\0"
-	"\x18\x00\x00\x00\x8e\xba\xd0\x7a"
-	"vfs_truncate\0\0\0\0"
-	"\x14\x00\x00\x00\xc5\x3b\x2e\x26"
-	"path_put\0\0\0\0"
-	"\x18\x00\x00\x00\x8c\x89\xd4\xcb"
-	"fortify_panic\0\0\0"
-	"\x18\x00\x00\x00\x27\x5f\x53\x17"
+	"do_splice_direct\0"
+	"__wake_up\0"
+	"kernel_accept\0"
+	"__module_get\0"
+	"ib_event_msg\0"
+	"kernel_recvmsg\0"
+	"vfs_unlink\0"
+	"_raw_spin_lock\0"
+	"mempool_free\0"
+	"vfs_truncate\0"
+	"path_put\0"
 	"rdma_disconnect\0"
-	"\x1c\x00\x00\x00\xbc\x2c\xf7\xb6"
 	"vfs_copy_file_range\0"
-	"\x14\x00\x00\x00\xbb\x6d\xfb\xbd"
-	"__fentry__\0\0"
-	"\x14\x00\x00\x00\x61\xe2\x83\xe7"
-	"sysfs_emit\0\0"
-	"\x14\x00\x00\x00\xd3\x14\x6c\x80"
+	"__fentry__\0"
+	"sysfs_emit\0"
 	"make_vfsuid\0"
-	"\x18\x00\x00\x00\xc7\x3b\xb7\x58"
-	"match_wildcard\0\0"
-	"\x14\x00\x00\x00\x2f\x30\xcf\x45"
-	"__put_cred\0\0"
-	"\x18\x00\x00\x00\x92\x00\x55\xe6"
-	"utf8_casefold\0\0\0"
-	"\x18\x00\x00\x00\x90\x03\xc3\xec"
+	"match_wildcard\0"
+	"__put_cred\0"
+	"utf8_casefold\0"
 	"wake_up_process\0"
-	"\x14\x00\x00\x00\x02\x8a\x26\x01"
-	"vfs_mkdir\0\0\0"
-	"\x1c\x00\x00\x00\x22\xc4\x7f\xd0"
-	"dev_driver_string\0\0\0"
-	"\x14\x00\x00\x00\xae\x9f\x65\x25"
-	"vfs_statfs\0\0"
-	"\x1c\x00\x00\x00\x3a\xbf\x5a\x39"
-	"crypto_destroy_tfm\0\0"
-	"\x18\x00\x00\x00\xdb\x2c\x48\x04"
-	"__refrigerator\0\0"
-	"\x24\x00\x00\x00\x97\x70\x48\x65"
-	"__x86_indirect_thunk_rax\0\0\0\0"
-	"\x14\x00\x00\x00\x70\x3c\xa1\x94"
-	"lookup_one\0\0"
-	"\x1c\x00\x00\x00\x21\x9b\x07\xf4"
-	"dma_map_page_attrs\0\0"
-	"\x18\x00\x00\x00\xc4\x53\x36\xd7"
-	"freezer_active\0\0"
-	"\x10\x00\x00\x00\x7e\x3a\x2c\x12"
+	"vfs_mkdir\0"
+	"dev_driver_string\0"
+	"vfs_statfs\0"
+	"crypto_destroy_tfm\0"
+	"__refrigerator\0"
+	"__x86_indirect_thunk_rax\0"
+	"dma_map_page_attrs\0"
+	"freezer_active\0"
 	"_printk\0"
-	"\x1c\x00\x00\x00\x7b\xcc\x27\x84"
-	"_raw_spin_lock_irq\0\0"
-	"\x18\x00\x00\x00\x58\xc9\x53\x19"
-	"mempool_create\0\0"
-	"\x18\x00\x00\x00\x2f\x4b\x6e\x08"
-	"vfs_fallocate\0\0\0"
-	"\x14\x00\x00\x00\x54\x92\xb2\x96"
+	"_raw_spin_lock_irq\0"
+	"vfs_fallocate\0"
 	"strncasecmp\0"
-	"\x18\x00\x00\x00\x81\xc8\x24\x1d"
-	"___ratelimit\0\0\0\0"
-	"\x1c\x00\x00\x00\xad\x8a\xdd\x8d"
-	"schedule_timeout\0\0\0\0"
-	"\x14\x00\x00\x00\x51\x0e\x00\x01"
-	"schedule\0\0\0\0"
-	"\x1c\x00\x00\x00\xcb\xf6\xfd\xf0"
-	"__stack_chk_fail\0\0\0\0"
-	"\x20\x00\x00\x00\x0c\xcc\x87\x84"
+	"__ref_stack_chk_guard\0"
+	"___ratelimit\0"
+	"schedule_timeout\0"
+	"schedule\0"
+	"__stack_chk_fail\0"
 	"__rdma_create_kernel_id\0"
-	"\x20\x00\x00\x00\x5f\x69\x96\x02"
-	"refcount_warn_saturate\0\0"
-	"\x20\x00\x00\x00\x6d\xb5\xfc\xb2"
-	"queue_delayed_work_on\0\0\0"
-	"\x14\x00\x00\x00\xdf\x5a\xde\x19"
-	"load_nls\0\0\0\0"
-	"\x14\x00\x00\x00\x0f\x31\x3b\xbb"
-	"make_kuid\0\0\0"
-	"\x18\x00\x00\x00\x46\xbe\xf8\xf2"
-	"mnt_want_write\0\0"
-	"\x10\x00\x00\x00\x94\xb6\x16\xa9"
+	"refcount_warn_saturate\0"
+	"queue_delayed_work_on\0"
+	"load_nls\0"
+	"make_kuid\0"
+	"mnt_want_write\0"
 	"strnlen\0"
-	"\x14\x00\x00\x00\x02\x02\x75\x5d"
 	"__alloc_skb\0"
-	"\x18\x00\x00\x00\x59\x01\x5a\xa9"
 	"locks_init_lock\0"
-	"\x18\x00\x00\x00\xec\x2a\x76\xc3"
-	"mempool_alloc\0\0\0"
-	"\x18\x00\x00\x00\xa3\x48\x7c\xc5"
-	"idr_get_next\0\0\0\0"
-	"\x18\x00\x00\x00\x91\x4a\x8d\x2f"
+	"idr_get_next\0"
 	"netlink_capable\0"
-	"\x24\x00\x00\x00\x7c\xb2\x83\x63"
-	"__x86_indirect_thunk_rdx\0\0\0\0"
-	"\x1c\x00\x00\x00\x71\x21\xac\xbb"
-	"kmem_cache_alloc\0\0\0\0"
-	"\x10\x00\x00\x00\x13\x45\x98\x9f"
+	"__x86_indirect_thunk_rdx\0"
 	"strrchr\0"
-	"\x18\x00\x00\x00\x33\x15\xc6\x38"
-	"get_inode_acl\0\0\0"
-	"\x14\x00\x00\x00\xc3\x97\xe2\x16"
-	"bit_wait\0\0\0\0"
-	"\x14\x00\x00\x00\x6d\xd0\xc1\x65"
-	"init_task\0\0\0"
-	"\x14\x00\x00\x00\x22\x16\x06\x75"
-	"module_put\0\0"
-	"\x20\x00\x00\x00\x6d\x70\x6e\xf0"
+	"get_inode_acl\0"
+	"bit_wait\0"
+	"init_task\0"
+	"module_put\0"
 	"ib_device_get_by_netdev\0"
-	"\x18\x00\x00\x00\x90\xba\xf1\x79"
-	"rdma_bind_addr\0\0"
-	"\x1c\x00\x00\x00\xe9\xbf\xd6\xaa"
-	"ib_register_client\0\0"
-	"\x28\x00\x00\x00\xb3\x1c\xa2\x87"
-	"__ubsan_handle_out_of_bounds\0\0\0\0"
-	"\x1c\x00\x00\x00\x5e\xd7\xd8\x7c"
-	"page_offset_base\0\0\0\0"
-	"\x18\x00\x00\x00\x1c\xb4\x9f\x59"
-	"kvmalloc_node\0\0\0"
-	"\x18\x00\x00\x00\xca\x03\xbf\x94"
-	"utf8_to_utf32\0\0\0"
-	"\x18\x00\x00\x00\xc7\x4f\xa6\x33"
-	"rdma_create_qp\0\0"
-	"\x14\x00\x00\x00\x5b\xa9\x65\x76"
-	"idr_remove\0\0"
-	"\x10\x00\x00\x00\xe8\x3d\xcb\x95"
+	"rdma_bind_addr\0"
+	"ib_register_client\0"
+	"__ubsan_handle_out_of_bounds\0"
+	"page_offset_base\0"
+	"sized_strscpy\0"
+	"utf8_to_utf32\0"
+	"rdma_create_qp\0"
+	"idr_remove\0"
 	"putname\0"
-	"\x18\x00\x00\x00\x10\x8c\x84\x67"
-	"vfs_remove_acl\0\0"
-	"\x14\x00\x00\x00\xa5\xf8\xac\x9e"
-	"kstrndup\0\0\0\0"
-	"\x1c\x00\x00\x00\x1d\xdf\x7e\xcd"
-	"crypto_aead_setkey\0\0"
-	"\x18\x00\x00\x00\x50\xd2\xdd\xe4"
+	"vfs_remove_acl\0"
+	"kstrndup\0"
+	"mempool_alloc_noprof\0"
+	"crypto_aead_setkey\0"
+	"__dma_sync_single_for_cpu\0"
 	"rdma_rw_ctx_wrs\0"
-	"\x18\x00\x00\x00\x75\x79\x48\xfe"
 	"init_wait_entry\0"
-	"\x10\x00\x00\x00\x08\x28\xa8\xca"
-	"fput\0\0\0\0"
-	"\x14\x00\x00\x00\xd2\x19\xbc\x57"
-	"down_write\0\0"
-	"\x14\x00\x00\x00\xfe\x8c\x6a\x24"
-	"init_net\0\0\0\0"
-	"\x14\x00\x00\x00\x25\x7a\x80\xce"
-	"up_write\0\0\0\0"
-	"\x1c\x00\x00\x00\x44\xa7\x87\x45"
+	"fput\0"
+	"down_write\0"
+	"init_net\0"
+	"up_write\0"
 	"crypto_shash_setkey\0"
-	"\x1c\x00\x00\x00\x16\xa0\x99\x8a"
-	"mempool_free_slab\0\0\0"
-	"\x1c\x00\x00\x00\x0f\x81\x69\x24"
-	"__rcu_read_unlock\0\0\0"
-	"\x1c\x00\x00\x00\x66\xdf\xbe\xee"
+	"mempool_free_slab\0"
+	"__rcu_read_unlock\0"
 	"crypto_aead_encrypt\0"
-	"\x14\x00\x00\x00\xad\x48\xf5\xb3"
+	"sk_skb_reason_drop\0"
 	"kmemdup_nul\0"
-	"\x18\x00\x00\x00\xe1\xb1\x4a\x82"
 	"netlink_unicast\0"
-	"\x10\x00\x00\x00\x6d\x3e\x5a\xa8"
 	"xa_load\0"
-	"\x1c\x00\x00\x00\x63\xa5\x03\x4c"
 	"random_kmalloc_seed\0"
-	"\x1c\x00\x00\x00\x3c\xa2\xb8\x51"
-	"kfree_skb_reason\0\0\0\0"
-	"\x20\x00\x00\x00\xc2\xaf\x69\x4a"
-	"kernel_sock_shutdown\0\0\0\0"
-	"\x14\x00\x00\x00\x9c\x09\x4f\x95"
+	"vmalloc_noprof\0"
+	"kernel_sock_shutdown\0"
 	"idr_preload\0"
-	"\x1c\x00\x00\x00\x0c\xd2\x03\x8c"
-	"destroy_workqueue\0\0\0"
-	"\x14\x00\x00\x00\x5b\x3b\xdd\x69"
-	"crc32_le\0\0\0\0"
-	"\x18\x00\x00\x00\x41\xfe\x8e\xe6"
+	"destroy_workqueue\0"
+	"crc32_le\0"
 	"_raw_write_lock\0"
-	"\x14\x00\x00\x00\x4b\x8d\xfa\x4d"
-	"mutex_lock\0\0"
-	"\x18\x00\x00\x00\xa4\x1c\x7a\xcd"
+	"mutex_lock\0"
 	"kmem_cache_free\0"
-	"\x18\x00\x00\x00\x21\x6b\x49\x9b"
+	"crypto_shash_init\0"
 	"posix_acl_alloc\0"
-	"\x10\x00\x00\x00\x11\x13\x92\x5a"
 	"strncmp\0"
-	"\x18\x00\x00\x00\xbd\xa6\x16\xa1"
-	"__ib_alloc_cq\0\0\0"
-	"\x20\x00\x00\x00\x53\x0f\x75\x4b"
-	"_raw_spin_unlock_irq\0\0\0\0"
-	"\x10\x00\x00\x00\xbd\x10\x5c\x44"
+	"__ib_alloc_cq\0"
+	"_raw_spin_unlock_irq\0"
 	"nla_put\0"
-	"\x14\x00\x00\x00\x37\xef\xf9\xe7"
-	"from_kgid\0\0\0"
-	"\x18\x00\x00\x00\x33\xf8\x3d\xd9"
-	"vfs_getxattr\0\0\0\0"
-	"\x18\x00\x00\x00\xc0\x0f\x76\xd0"
+	"from_kgid\0"
+	"const_current_task\0"
+	"vfs_getxattr\0"
 	"kfree_sensitive\0"
-	"\x24\x00\x00\x00\xe9\xc8\x79\x1a"
-	"__x86_indirect_thunk_r13\0\0\0\0"
-	"\x14\x00\x00\x00\x14\xc5\xb7\xff"
-	"ida_free\0\0\0\0"
-	"\x14\x00\x00\x00\xb0\x28\x9d\x4c"
-	"phys_base\0\0\0"
-	"\x14\x00\x00\x00\xe2\x3c\x39\x37"
+	"__x86_indirect_thunk_r13\0"
+	"ida_free\0"
+	"phys_base\0"
 	"rdma_listen\0"
-	"\x1c\x00\x00\x00\xdd\x31\xdf\x43"
-	"crypto_shash_update\0"
-	"\x14\x00\x00\x00\x49\xf2\x45\x8d"
 	"from_vfsgid\0"
-	"\x1c\x00\x00\x00\x73\xec\x85\x47"
-	"class_unregister\0\0\0\0"
-	"\x1c\x00\x00\x00\xb6\x55\x4d\xdd"
-	"_raw_read_unlock\0\0\0\0"
-	"\x1c\x00\x00\x00\x96\xca\xc6\x9e"
+	"class_unregister\0"
+	"_raw_read_unlock\0"
 	"ktime_get_real_ts64\0"
-	"\x18\x00\x00\x00\x0c\x17\x83\xa6"
 	"rdma_destroy_qp\0"
-	"\x1c\x00\x00\x00\x98\x5c\x23\x40"
-	"_raw_write_unlock\0\0\0"
-	"\x10\x00\x00\x00\xa7\xd0\x9a\x44"
-	"memcmp\0\0"
-	"\x1c\x00\x00\x00\xa2\x10\x74\xb8"
-	"lock_sock_nested\0\0\0\0"
-	"\x18\x00\x00\x00\x74\x39\x9f\x68"
-	"kthread_stop\0\0\0\0"
-	"\x18\x00\x00\x00\x9f\x0c\xfb\xce"
-	"__mutex_init\0\0\0\0"
-	"\x18\x00\x00\x00\xde\x9e\xbb\x9c"
-	"set_posix_acl\0\0\0"
-	"\x1c\x00\x00\x00\x70\xfc\xbe\x37"
-	"jiffies_to_msecs\0\0\0\0"
-	"\x1c\x00\x00\x00\xd1\x7d\x41\x93"
-	"freezing_slow_path\0\0"
-	"\x1c\x00\x00\x00\x10\x45\xf4\x91"
-	"idr_alloc_cyclic\0\0\0\0"
-	"\x10\x00\x00\x00\xc7\x9a\x08\x11"
-	"_ctype\0\0"
-	"\x1c\x00\x00\x00\x2c\x21\x52\xc4"
-	"utf8_strncasecmp\0\0\0\0"
-	"\x14\x00\x00\x00\xae\xb3\x17\x8e"
+	"_raw_write_unlock\0"
+	"memcmp\0"
+	"lock_sock_nested\0"
+	"kthread_stop\0"
+	"__mutex_init\0"
+	"set_posix_acl\0"
+	"__fortify_panic\0"
+	"jiffies_to_msecs\0"
+	"freezing_slow_path\0"
+	"idr_alloc_cyclic\0"
+	"_ctype\0"
+	"utf8_strncasecmp\0"
 	"idr_destroy\0"
-	"\x1c\x00\x00\x00\x07\xa1\x65\x5b"
-	"sock_set_reuseaddr\0\0"
-	"\x1c\x00\x00\x00\x4d\x75\xf3\x3a"
-	"locks_alloc_lock\0\0\0\0"
-	"\x14\x00\x00\x00\x41\x5e\x01\x2c"
-	"from_kuid\0\0\0"
-	"\x20\x00\x00\x00\x72\x77\x48\x13"
-	"dma_sync_single_for_cpu\0"
-	"\x18\x00\x00\x00\x47\x46\x69\x22"
-	"getname_kernel\0\0"
-	"\x10\x00\x00\x00\xc5\x8f\x57\xfb"
-	"memset\0\0"
-	"\x14\x00\x00\x00\xa8\x8c\x54\xa4"
-	"kern_path\0\0\0"
-	"\x18\x00\x00\x00\x10\x1e\x4c\xf7"
-	"vfs_lock_file\0\0\0"
-	"\x14\x00\x00\x00\xef\x0c\x2a\x6d"
+	"sock_set_reuseaddr\0"
+	"locks_alloc_lock\0"
+	"from_kuid\0"
+	"getname_kernel\0"
+	"memset\0"
+	"kern_path\0"
+	"vfs_lock_file\0"
 	"kernel_read\0"
-	"\x1c\x00\x00\x00\x00\x40\x97\x25"
 	"wait_for_completion\0"
-	"\x1c\x00\x00\x00\x9f\x44\x72\xc9"
-	"mempool_alloc_slab\0\0"
-	"\x1c\x00\x00\x00\xca\x39\x82\x5b"
-	"__x86_return_thunk\0\0"
-	"\x20\x00\x00\x00\x54\xea\xa5\xd9"
-	"__init_waitqueue_head\0\0\0"
-	"\x14\x00\x00\x00\x22\xc3\xf2\x43"
-	"make_kgid\0\0\0"
-	"\x1c\x00\x00\x00\x5e\xbc\x6f\xc6"
-	"from_kgid_munged\0\0\0\0"
-	"\x14\x00\x00\x00\x37\x4d\x38\xfb"
-	"kasprintf\0\0\0"
-	"\x18\x00\x00\x00\xfa\xbe\xa2\x91"
-	"unlock_rename\0\0\0"
-	"\x14\x00\x00\x00\xa0\x8d\x7b\x42"
-	"vfs_rmdir\0\0\0"
-	"\x1c\x00\x00\x00\xba\x00\x05\x31"
-	"ib_destroy_cq_user\0\0"
-	"\x18\x00\x00\x00\x4a\xb6\x1d\x13"
-	"system_long_wq\0\0"
-	"\x14\x00\x00\x00\xa1\x19\x8b\x66"
-	"down_read\0\0\0"
-	"\x10\x00\x00\x00\x5a\x25\xd5\xe2"
-	"strcmp\0\0"
-	"\x14\x00\x00\x00\xec\xc6\x97\x99"
-	"skb_trim\0\0\0\0"
-	"\x20\x00\x00\x00\x6e\xec\x85\x36"
-	"lookup_one_qstr_excl\0\0\0\0"
-	"\x28\x00\x00\x00\x06\x62\x0d\x9d"
-	"unregister_netdevice_notifier\0\0\0"
-	"\x10\x00\x00\x00\xa6\x50\xba\x15"
+	"mempool_alloc_slab\0"
+	"__x86_return_thunk\0"
+	"kmem_cache_alloc_noprof\0"
+	"kmemdup_noprof\0"
+	"__init_waitqueue_head\0"
+	"make_kgid\0"
+	"__kmem_cache_create_args\0"
+	"from_kgid_munged\0"
+	"kasprintf\0"
+	"unlock_rename\0"
+	"vfs_rmdir\0"
+	"ib_destroy_cq_user\0"
+	"system_long_wq\0"
+	"down_read\0"
+	"strcmp\0"
+	"skb_trim\0"
+	"lookup_one_qstr_excl\0"
+	"unregister_netdevice_notifier\0"
 	"jiffies\0"
-	"\x20\x00\x00\x00\xcb\xae\x17\x38"
-	"kthread_create_on_node\0\0"
-	"\x18\x00\x00\x00\xee\x76\x42\xd9"
-	"mnt_drop_write\0\0"
-	"\x10\x00\x00\x00\xa7\xb0\x39\x2d"
+	"kthread_create_on_node\0"
+	"mnt_drop_write\0"
 	"kstrdup\0"
-	"\x14\x00\x00\x00\x81\xa9\x45\x07"
-	"xa_erase\0\0\0\0"
-	"\x18\x00\x00\x00\x64\x53\x5f\x20"
-	"override_creds\0\0"
-	"\x1c\x00\x00\x00\xc6\x0e\x84\xe5"
-	"ib_wc_status_msg\0\0\0\0"
-	"\x18\x00\x00\x00\x6c\x1e\x65\x97"
-	"vmemmap_base\0\0\0\0"
-	"\x14\x00\x00\x00\x14\x55\x19\x65"
-	"path_get\0\0\0\0"
-	"\x20\x00\x00\x00\x45\xa7\xaa\x65"
-	"vfs_path_parent_lookup\0\0"
-	"\x10\x00\x00\x00\x39\xe6\x64\xdd"
-	"strscpy\0"
-	"\x2c\x00\x00\x00\x61\xe5\x48\xa6"
-	"__ubsan_handle_shift_out_of_bounds\0\0"
-	"\x18\x00\x00\x00\x40\x9b\xca\xd1"
-	"kernel_listen\0\0\0"
-	"\x1c\x00\x00\x00\x05\xba\x0f\x0c"
-	"ib_dma_virt_map_sg\0\0"
-	"\x18\x00\x00\x00\x52\x0a\xc1\x44"
+	"xa_erase\0"
+	"ib_wc_status_msg\0"
+	"vmemmap_base\0"
+	"path_get\0"
+	"vfs_path_parent_lookup\0"
+	"__ubsan_handle_shift_out_of_bounds\0"
+	"__preempt_count\0"
+	"kernel_listen\0"
+	"ib_dma_virt_map_sg\0"
 	"kvfree_call_rcu\0"
-	"\x10\x00\x00\x00\x97\x82\x9e\x99"
-	"vfree\0\0\0"
-	"\x14\x00\x00\x00\x59\xeb\xa1\x81"
+	"vfree\0"
 	"utf8_unload\0"
-	"\x14\x00\x00\x00\x20\xb5\xa8\x2e"
-	"vfs_fsync\0\0\0"
-	"\x1c\x00\x00\x00\x80\x08\xe1\x5c"
-	"crypto_shash_final\0\0"
-	"\x10\x00\x00\x00\x6c\x9b\xdf\x85"
-	"strsep\0\0"
-	"\x18\x00\x00\x00\x38\xf0\x13\x32"
-	"mutex_unlock\0\0\0\0"
-	"\x24\x00\x00\x00\x4a\x18\xa7\x9f"
-	"cancel_delayed_work_sync\0\0\0\0"
-	"\x1c\x00\x00\x00\x52\x90\xa3\xa3"
-	"sock_create_kern\0\0\0\0"
-	"\x14\x00\x00\x00\x3a\x4c\xf0\x68"
-	"ib_free_cq\0\0"
-	"\x18\x00\x00\x00\x39\x63\xf4\xc6"
-	"init_timer_key\0\0"
-	"\x14\x00\x00\x00\x5c\x90\x4a\x5f"
+	"vfs_fsync\0"
+	"strsep\0"
+	"mutex_unlock\0"
+	"crypto_shash_finup\0"
+	"cancel_delayed_work_sync\0"
+	"mempool_create_node_noprof\0"
+	"sock_create_kern\0"
+	"ib_free_cq\0"
 	"groups_free\0"
-	"\x18\x00\x00\x00\x8c\xde\x5b\xda"
 	"rdma_destroy_id\0"
-	"\x18\x00\x00\x00\x99\xa3\x23\x64"
-	"init_user_ns\0\0\0\0"
-	"\x14\x00\x00\x00\x14\x1c\x49\xd9"
-	"xa_destroy\0\0"
-	"\x14\x00\x00\x00\x80\x3c\x7b\xc8"
-	"file_path\0\0\0"
-	"\x18\x00\x00\x00\x0d\x82\x07\xfc"
+	"__dma_sync_single_for_device\0"
+	"init_user_ns\0"
+	"xa_destroy\0"
+	"file_path\0"
 	"vfs_path_lookup\0"
-	"\x14\x00\x00\x00\x43\x5e\xf8\x81"
 	"dentry_open\0"
-	"\x10\x00\x00\x00\x24\x5c\xa2\x8f"
 	"xa_find\0"
-	"\x10\x00\x00\x00\xe4\x15\xe2\xfb"
-	"sg_next\0"
-	"\x24\x00\x00\x00\xf9\xa4\xcc\x66"
-	"__x86_indirect_thunk_rcx\0\0\0\0"
-	"\x10\x00\x00\x00\x41\xcc\xb4\x66"
-	"kmemdup\0"
-	"\x18\x00\x00\x00\x96\xa6\x34\x90"
 	"mempool_destroy\0"
-	"\x1c\x00\x00\x00\x91\x5b\x5f\x6d"
-	"radix_tree_tagged\0\0\0"
-	"\x1c\x00\x00\x00\xfe\x2d\xc1\x03"
-	"cancel_work_sync\0\0\0\0"
-	"\x18\x00\x00\x00\x18\x01\x47\x56"
-	"__warn_printk\0\0\0"
-	"\x24\x00\x00\x00\x48\x10\xda\xd2"
+	"radix_tree_tagged\0"
+	"__kmalloc_cache_noprof\0"
+	"cancel_work_sync\0"
+	"__warn_printk\0"
 	"register_netdevice_notifier\0"
-	"\x14\x00\x00\x00\xc0\x5b\x73\xef"
 	"rdma_accept\0"
-	"\x10\x00\x00\x00\xf4\xf1\x5c\xf7"
-	"dput\0\0\0\0"
-	"\x14\x00\x00\x00\x2f\x28\x3e\x5b"
-	"xa_store\0\0\0\0"
-	"\x14\x00\x00\x00\xf6\x5e\xb8\xd9"
+	"dput\0"
+	"xa_store\0"
 	"lockref_get\0"
-	"\x20\x00\x00\x00\x6a\xdf\xee\xff"
-	"delayed_work_timer_fn\0\0\0"
-	"\x18\x00\x00\x00\x29\x2f\xf3\xab"
+	"delayed_work_timer_fn\0"
+	"lookup_noperm_unlocked\0"
 	"utf16s_to_utf8s\0"
-	"\x20\x00\x00\x00\xde\x03\x87\x49"
-	"vfs_clone_file_range\0\0\0\0"
-	"\x18\x00\x00\x00\xf0\x61\x8c\xfe"
-	"_raw_read_lock\0\0"
-	"\x18\x00\x00\x00\xc4\xc1\x53\x0b"
-	"sock_release\0\0\0\0"
-	"\x14\x00\x00\x00\xb9\xc3\x6f\x54"
-	"vfs_llseek\0\0"
-	"\x14\x00\x00\x00\xed\xfb\xa4\xc7"
-	"rtnl_lock\0\0\0"
-	"\x1c\x00\x00\x00\x09\x37\xed\x41"
-	"get_random_bytes\0\0\0\0"
-	"\x20\x00\x00\x00\x21\x5a\x32\x95"
-	"tcp_sock_set_nodelay\0\0\0\0"
-	"\x14\x00\x00\x00\x08\x88\x8d\x5f"
+	"vfs_clone_file_range\0"
+	"_raw_read_lock\0"
+	"sock_release\0"
+	"vfs_llseek\0"
+	"rtnl_lock\0"
+	"timer_init_key\0"
+	"get_random_bytes\0"
+	"tcp_sock_set_nodelay\0"
 	"ib_drain_qp\0"
-	"\x1c\x00\x00\x00\xf1\x59\xda\xa2"
-	"ib_dealloc_pd_user\0\0"
-	"\x1c\x00\x00\x00\xcb\x84\xfb\x8b"
-	"done_path_create\0\0\0\0"
-	"\x14\x00\x00\x00\xf5\x41\x4d\x82"
-	"vfs_link\0\0\0\0"
-	"\x1c\x00\x00\x00\xe6\x89\x97\x41"
-	"dma_unmap_sg_attrs\0\0"
-	"\x14\x00\x00\x00\xf8\x7b\x30\xf1"
+	"ib_dealloc_pd_user\0"
+	"done_path_create\0"
+	"vfs_link\0"
+	"dma_unmap_sg_attrs\0"
 	"groups_sort\0"
-	"\x20\x00\x00\x00\xf3\x32\x74\x6a"
-	"genl_unregister_family\0\0"
-	"\x14\x00\x00\x00\x17\x18\xa6\x02"
+	"genl_unregister_family\0"
 	"dget_parent\0"
-	"\x1c\x00\x00\x00\x65\x4e\xeb\x73"
-	"from_kuid_munged\0\0\0\0"
-	"\x1c\x00\x00\x00\x45\x73\xcf\xc1"
+	"from_kuid_munged\0"
 	"prepare_kernel_cred\0"
-	"\x18\x00\x00\x00\x4b\x91\x36\xdf"
-	"xa_find_after\0\0\0"
-	"\x18\x00\x00\x00\x04\xf1\x55\xbf"
-	"kmalloc_trace\0\0\0"
-	"\x1c\x00\x00\x00\x2e\x7a\xf8\xcc"
-	"lock_rename_child\0\0\0"
-	"\x14\x00\x00\x00\x90\x3e\xa1\x60"
+	"xa_find_after\0"
+	"alloc_workqueue_noprof\0"
+	"lock_rename_child\0"
 	"rcu_barrier\0"
-	"\x18\x00\x00\x00\x26\xce\xdc\xfd"
-	"dev_get_flags\0\0\0"
-	"\x1c\x00\x00\x00\x92\xbf\x3b\x87"
-	"locks_delete_block\0\0"
-	"\x2c\x00\x00\x00\xc6\xfa\xb1\x54"
-	"__ubsan_handle_load_invalid_value\0\0\0"
-	"\x10\x00\x00\x00\x9c\x53\x4d\x75"
-	"strlen\0\0"
-	"\x14\x00\x00\x00\x79\xac\xfb\xa0"
+	"locks_delete_block\0"
+	"__ubsan_handle_load_invalid_value\0"
+	"strlen\0"
 	"wake_up_bit\0"
-	"\x1c\x00\x00\x00\xe8\x87\xce\x13"
-	"asn1_ber_decoder\0\0\0\0"
-	"\x1c\x00\x00\x00\xc6\xb5\x13\x47"
-	"inode_permission\0\0\0\0"
-	"\x10\x00\x00\x00\x6e\x75\xa1\x7a"
-	"kvfree\0\0"
-	"\x18\x00\x00\x00\xf1\x50\x29\x3b"
-	"ib_device_put\0\0\0"
-	"\x10\x00\x00\x00\x85\xba\x9c\x34"
-	"strchr\0\0"
-	"\x1c\x00\x00\x00\x12\xdf\xc1\x6f"
-	"crypto_alloc_shash\0\0"
-	"\x10\x00\x00\x00\x8f\x68\xee\xd6"
-	"vmalloc\0"
-	"\x20\x00\x00\x00\x68\x5a\xb4\x25"
-	"genl_register_family\0\0\0\0"
-	"\x1c\x00\x00\x00\xe2\x1d\x28\x4a"
+	"asn1_ber_decoder\0"
+	"inode_permission\0"
+	"kvfree\0"
+	"ib_device_put\0"
+	"strchr\0"
+	"crypto_alloc_shash\0"
+	"genl_register_family\0"
 	"generic_file_llseek\0"
-	"\x1c\x00\x00\x00\x34\x4b\xb5\xb5"
-	"_raw_spin_unlock\0\0\0\0"
-	"\x20\x00\x00\x00\x49\x9c\x22\x9e"
-	"sg_alloc_table_chained\0\0"
-	"\x18\x00\x00\x00\xc7\x23\xcc\xbc"
-	"kernel_sendmsg\0\0"
-	"\x18\x00\x00\x00\x47\xcc\xba\x8a"
-	"get_max_files\0\0\0"
-	"\x14\x00\x00\x00\xa2\xab\x10\x74"
-	"strreplace\0\0"
-	"\x14\x00\x00\x00\xd1\x28\xdd\x3b"
-	"unload_nls\0\0"
-	"\x14\x00\x00\x00\x11\x03\xab\xce"
-	"strchrnul\0\0\0"
-	"\x10\x00\x00\x00\xa2\x54\xb9\x53"
+	"_raw_spin_unlock\0"
+	"sg_alloc_table_chained\0"
+	"kernel_sendmsg\0"
+	"get_max_files\0"
+	"__kvmalloc_node_noprof\0"
+	"strreplace\0"
+	"unload_nls\0"
+	"strchrnul\0"
 	"up_read\0"
-	"\x18\x00\x00\x00\x6a\x11\xa2\x52"
-	"class_register\0\0"
-	"\x18\x00\x00\x00\x0a\xd0\xf2\x99"
-	"sysfs_emit_at\0\0\0"
-	"\x18\x00\x00\x00\x87\xb4\xad\x97"
+	"class_register\0"
+	"sysfs_emit_at\0"
 	"utf8s_to_utf16s\0"
-	"\x18\x00\x00\x00\x10\xc9\xf0\x2c"
-	"sg_init_table\0\0\0"
-	"\x18\x00\x00\x00\x64\x68\x51\xf9"
+	"sg_init_table\0"
 	"sock_setsockopt\0"
-	"\x10\x00\x00\x00\xf9\x82\xa4\xf9"
-	"msleep\0\0"
-	"\x18\x00\x00\x00\xe0\x95\x25\xf9"
+	"msleep\0"
 	"locks_free_lock\0"
-	"\x14\x00\x00\x00\x45\x3a\x23\xeb"
-	"__kmalloc\0\0\0"
-	"\x14\x00\x00\x00\xd6\x95\xb4\x09"
-	"set_groups\0\0"
-	"\x20\x00\x00\x00\x5d\x7b\xc1\xe2"
-	"__SCT__might_resched\0\0\0\0"
-	"\x18\x00\x00\x00\x46\xe9\x04\x10"
-	"kmalloc_caches\0\0"
-	"\x18\x00\x00\x00\xbd\x84\x24\x8c"
-	"kernel_write\0\0\0\0"
-	"\x1c\x00\x00\x00\xa7\x92\x82\x87"
-	"kmem_cache_destroy\0\0"
-	"\x18\x00\x00\x00\xd1\xd4\x62\xaa"
-	"release_sock\0\0\0\0"
-	"\x1c\x00\x00\x00\x88\x60\xa5\x6f"
-	"dma_map_sg_attrs\0\0\0\0"
-	"\x14\x00\x00\x00\xd3\x85\x33\x2d"
-	"system_wq\0\0\0"
-	"\x10\x00\x00\x00\x3d\x3d\xfb\x04"
-	"d_path\0\0"
-	"\x14\x00\x00\x00\xd3\x3f\x95\xb5"
-	"vfs_create\0\0"
-	"\x1c\x00\x00\x00\x90\xf9\xfb\xdc"
-	"rdma_rw_ctx_init\0\0\0\0"
-	"\x18\x00\x00\x00\x2e\x9f\xe7\xf6"
-	"module_layout\0\0\0"
-	"\x00\x00\x00\x00\x00\x00\x00\x00";
+	"set_groups\0"
+	"__SCT__might_resched\0"
+	"kmalloc_caches\0"
+	"inode_set_ctime_to_ts\0"
+	"krealloc_noprof\0"
+	"kernel_write\0"
+	"kmem_cache_destroy\0"
+	"release_sock\0"
+	"dma_map_sg_attrs\0"
+	"system_wq\0"
+	"d_path\0"
+	"vfs_create\0"
+	"rdma_rw_ctx_init\0"
+	"module_layout\0"
+;
 
 MODULE_INFO(depends, "ib_core,rdma_cm");
 
 
-MODULE_INFO(srcversion, "723EE4C77E08C48C6807D49");
+MODULE_INFO(srcversion, "0DFC849E85496AFA2C9C5D5");

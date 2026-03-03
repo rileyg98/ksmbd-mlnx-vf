@@ -1652,26 +1652,28 @@ static int smb_direct_init_params(struct smb_direct_transport *t,
                                   struct ib_qp_cap *cap) {
   int max_send_sges, max_rw_wrs, max_send_wrs;
   unsigned int max_sge_per_wr, wrs_per_credit;
-  struct ib_device_attr live_attrs;
+  struct ib_device_attr *live_attrs;
   struct ib_device_attr dev_attr;
   int ret;
 
-  /* Zero out our temporary struct */
-  memset(&live_attrs, 0, sizeof(live_attrs));
+  live_attrs = kzalloc(sizeof(*live_attrs), GFP_KERNEL);
+  if (!live_attrs)
+    return -ENOMEM;
 
   /* Instead of trusting the cached cm_id->device->attrs, 
    * we force the driver (mlx5_ib) to report the live hardware stats, 
    * passing NULL for the user-data pointer since we are in kernel space.
    */
   if (t->cm_id->device->ops.query_device) {
-          ret = t->cm_id->device->ops.query_device(t->cm_id->device, &live_attrs, NULL);
+          ret = t->cm_id->device->ops.query_device(t->cm_id->device, live_attrs, NULL);
           if (ret == 0) {
                   ksmbd_debug(RDMA, "Successfully queried live hardware attributes!\n");
                   /* Overwrite the broken cached attributes with the real ones */
-                  t->cm_id->device->attrs = live_attrs; 
+                  t->cm_id->device->attrs = *live_attrs; 
           }
   }
 
+  kfree(live_attrs);
   dev_attr = t->cm_id->device->attrs;
   /* need 3 more sge. because a SMB_DIRECT header, SMB2 header,
    * SMB2 response could be mapped.
@@ -1996,25 +1998,27 @@ static int smb_direct_handle_connect_request(struct rdma_cm_id *new_cm_id) {
   struct smb_direct_transport *t;
   struct task_struct *handler;
   int ret;
-  struct ib_device_attr live_attrs;
-  memset(&live_attrs, 0, sizeof(live_attrs));
+  struct ib_device_attr *live_attrs;
+
+  live_attrs = kzalloc(sizeof(*live_attrs), GFP_KERNEL);
+  if (!live_attrs)
+    return -ENOMEM;
 
   if (new_cm_id->device->ops.query_device) {
-          ret = new_cm_id->device->ops.query_device(new_cm_id->device, &live_attrs, NULL);
+          ret = new_cm_id->device->ops.query_device(new_cm_id->device, live_attrs, NULL);
           if (ret == 0)
-                  new_cm_id->device->attrs = live_attrs; 
+                  new_cm_id->device->attrs = *live_attrs; 
   }
 
-  struct ib_device_attr dev_attr;
-  dev_attr = new_cm_id->device->attrs;
-
-  if (!rdma_frwr_is_supported(&dev_attr)) {
+  if (!rdma_frwr_is_supported(&new_cm_id->device->attrs)) {
     ksmbd_debug(RDMA,
                 "Fast Registration Work Requests is not supported. device "
                 "capabilities=%llx\n",
-                dev_attr.device_cap_flags);
+                new_cm_id->device->attrs.device_cap_flags);
+    kfree(live_attrs);
     return -EPROTONOSUPPORT;
   }
+  kfree(live_attrs);
 
   t = alloc_transport(new_cm_id);
   if (!t)
@@ -2103,26 +2107,32 @@ static void smb_direct_ib_client_add(struct ib_device *ib_dev)
 #endif
 {
   struct smb_direct_device *smb_dev;
-  struct ib_device_attr live_attrs;
+  struct ib_device_attr *live_attrs;
   int ret;
 
-  memset(&live_attrs, 0, sizeof(live_attrs));
+  live_attrs = kzalloc(sizeof(*live_attrs), GFP_KERNEL);
+  if (!live_attrs)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+    return -ENOMEM;
+#else
+    return;
+#endif
 
   if (ib_dev->ops.query_device) {
-          ret = ib_dev->ops.query_device(ib_dev, &live_attrs, NULL);
+          ret = ib_dev->ops.query_device(ib_dev, live_attrs, NULL);
           if (ret == 0)
-                  ib_dev->attrs = live_attrs; 
+                  ib_dev->attrs = *live_attrs; 
   }
 
-  struct ib_device_attr dev_attr;
-  dev_attr = ib_dev->attrs;
-
-  if (!rdma_frwr_is_supported(&dev_attr))
+  if (!rdma_frwr_is_supported(&ib_dev->attrs)) {
+    kfree(live_attrs);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
     return 0;
 #else
     return;
 #endif
+  }
+  kfree(live_attrs);
 
   smb_dev = kzalloc(sizeof(*smb_dev), KSMBD_DEFAULT_GFP);
   if (!smb_dev)
@@ -2255,20 +2265,20 @@ out:
 
     ibdev = ib_device_get_by_netdev(netdev, RDMA_DRIVER_UNKNOWN);
     if (ibdev) {
-      struct ib_device_attr dev_attr;
-      struct ib_device_attr live_attrs;
+      struct ib_device_attr *live_attrs;
       int ret;
 
-      memset(&live_attrs, 0, sizeof(live_attrs));
+      live_attrs = kzalloc(sizeof(*live_attrs), GFP_KERNEL);
+      if (live_attrs) {
+        if (ibdev->ops.query_device) {
+                ret = ibdev->ops.query_device(ibdev, live_attrs, NULL);
+                if (ret == 0)
+                        ibdev->attrs = *live_attrs; 
+        }
 
-      if (ibdev->ops.query_device) {
-              ret = ibdev->ops.query_device(ibdev, &live_attrs, NULL);
-              if (ret == 0)
-                      ibdev->attrs = live_attrs; 
+        rdma_capable = rdma_frwr_is_supported(&ibdev->attrs);
+        kfree(live_attrs);
       }
-
-      dev_attr = ibdev->attrs;
-      rdma_capable = rdma_frwr_is_supported(&dev_attr);
       ib_device_put(ibdev);
     }
   }
