@@ -13,6 +13,12 @@ ifeq "$(CONFIG_SMB_SERVER_SMBDIRECT)" "y"
 ifneq "$(call SMBDIRECT_SUPPORTED)" "y"
 $(error CONFIG_SMB_SERVER_SMBDIRECT is supported in the kernel above 4.12 version)
 endif
+# Mellanox OFED support
+OFA_DIR := /usr/src/ofa_kernel-dkms/$(shell uname -m)/$(shell uname -r)
+ifneq ($(wildcard $(OFA_DIR)/include/rdma/ib_verbs.h),)
+ccflags-y += -I$(OFA_DIR)/include
+LINUXINCLUDE := -I$(OFA_DIR)/include $(LINUXINCLUDE)
+endif
 endif
 
 obj-$(CONFIG_SMB_SERVER) += ksmbd.o
@@ -42,9 +48,13 @@ PWD	:= $(shell pwd)
 PWD	:= $(shell pwd)
 
 export CONFIG_SMB_SERVER := m
-# TODO: Switch these if ofa_kernel-dkms exists, they enable Mellanox OFED support
-EXTRA_CFLAGS+="-I/usr/src/ofa_kernel-dkms/$arch/$kernelver/include"
-KBUILD_EXTRA_SYMBOLS="/usr/src/ofa_kernel-dkms/$arch/$kernelver/Module.symvers"
+# Mellanox OFED support
+arch := $(shell uname -m)
+kernelver := $(shell uname -r)
+OFA_DIR := /usr/src/ofa_kernel-dkms/$(arch)/$(kernelver)
+EXTRA_CFLAGS += -I$(OFA_DIR)/include
+KBUILD_EXTRA_SYMBOLS := $(OFA_DIR)/Module.symvers
+LINUXINCLUDE := -I$(OFA_DIR)/include $(LINUXINCLUDE)
 
 all:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules

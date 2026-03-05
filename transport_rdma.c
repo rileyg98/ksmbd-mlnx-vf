@@ -11,10 +11,12 @@
 
 #include <linux/kthread.h>
 #include <linux/list.h>
+#include <linux/stddef.h>
 #include <linux/mempool.h>
 #include <linux/highmem.h>
 #include <linux/scatterlist.h>
 #include <rdma/ib_verbs.h>
+#include <uapi/rdma/ib_user_sa.h>
 #include <rdma/rdma_cm.h>
 #include <rdma/rw.h>
 
@@ -2195,17 +2197,37 @@ static void smb_direct_ib_client_add(struct ib_device *ib_dev)
 {
 	struct smb_direct_device *smb_dev;
 
+	pr_info("ksmbd: ib_dev %s: node_type %d, transport_type %d\n",
+		ib_dev->name, ib_dev->node_type,
+		rdma_node_get_transport(ib_dev->node_type));
+
 	/* Set 5445 port if device type is iWARP(No IB) */
-	if (ib_dev->node_type != RDMA_NODE_IB_CA)
+	if (rdma_node_get_transport(ib_dev->node_type) == RDMA_TRANSPORT_IWARP)
 		smb_direct_port = SMB_DIRECT_PORT_IWARP;
 
-	if (!ib_dev->ops.get_netdev ||
-	    !rdma_frwr_is_supported(&ib_dev->attrs))
+	pr_info("ksmbd: ib_dev_attr debug: sizeof=%zu, cap_flags_off=%zu, page_list_len_off=%zu, max_sgl_rd_off=%zu\n",
+		    sizeof(struct ib_device_attr),
+		    offsetof(struct ib_device_attr, device_cap_flags),
+		    offsetof(struct ib_device_attr, max_fast_reg_page_list_len),
+		    offsetof(struct ib_device_attr, max_sgl_rd));
+
+	pr_info("ksmbd: ib device adding: name %s, cap_flags 0x%llx, page_list_len %u, max_sgl_rd %u\n",
+		    ib_dev->name, ib_dev->attrs.device_cap_flags,
+		    ib_dev->attrs.max_fast_reg_page_list_len, ib_dev->attrs.max_sgl_rd);
+
+	if (!rdma_frwr_is_supported(&ib_dev->attrs)) {
+		pr_info("ksmbd: device %s rejected: frwr not supported (cap_flags 0x%llx, max_fast_reg_page_list_len %u)\n",
+			ib_dev->name, ib_dev->attrs.device_cap_flags,
+			ib_dev->attrs.max_fast_reg_page_list_len);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
 		return 0;
 #else
 		return;
 #endif
+	}
+
+	if (!ib_dev->ops.get_netdev)
+		pr_info("ksmbd: device %s has no get_netdev, using fallback for IPoIB\n", ib_dev->name);
 
 	smb_dev = kzalloc(sizeof(*smb_dev), KSMBD_DEFAULT_GFP);
 	if (!smb_dev)
@@ -2258,9 +2280,10 @@ int ksmbd_rdma_init(void)
 
 	ret = ib_register_client(&smb_direct_ib_client);
 	if (ret) {
-		pr_err("failed to ib_register_client\n");
+		pr_err("ksmbd: failed to ib_register_client: %d\n", ret);
 		return ret;
 	}
+	pr_info("ksmbd: ib_register_client successful\n");
 
 	/* When a client is running out of send credits, the credits are
 	 * granted by the server's sending a packet using this queue.
@@ -2321,6 +2344,9 @@ static bool ksmbd_find_rdma_capable_netdev(struct net_device *netdev)
 		for (i = 0; i < smb_dev->ib_dev->phys_port_cnt; i++) {
 			struct net_device *ndev;
 
+			if (!smb_dev->ib_dev->ops.get_netdev)
+				continue;
+
 			ndev = smb_dev->ib_dev->ops.get_netdev(smb_dev->ib_dev,
 							       i + 1);
 			if (!ndev)
@@ -2344,6 +2370,17 @@ out:
 		if (ibdev) {
 			rdma_capable = rdma_frwr_is_supported(&ibdev->attrs);
 			ib_device_put(ibdev);
+		} else if (netdev->type == ARPHRD_INFINIBAND) {
+			/* Fallback for IPoIB: match via parent device */
+			read_lock(&smb_direct_device_lock);
+			list_for_each_entry(smb_dev, &smb_direct_device_list, list) {
+				if (smb_dev->ib_dev->dev.parent == netdev->dev.parent) {
+					if (rdma_frwr_is_supported(&smb_dev->ib_dev->attrs))
+						rdma_capable = true;
+					break;
+				}
+			}
+			read_unlock(&smb_direct_device_lock);
 		}
 	}
 

@@ -7,3 +7,7 @@
 *.asn1.c
 *.o.d
 *.mod
+Module.symvers
+modules.order
+build.log
+ksmbd.mod.c
