@@ -1414,6 +1414,7 @@ struct smb2_fs_control_info {
 #define FILE_NORMALIZED_NAME_INFORMATION 48
 #define FILEID_GLOBAL_TX_DIRECTORY_INFORMATION 50
 #define FILE_STANDARD_LINK_INFORMATION	54
+#define FILE_DISPOSITION_INFORMATION_EX	64
 
 #define OP_BREAK_STRUCT_SIZE_20		24
 #define OP_BREAK_STRUCT_SIZE_21		36
@@ -1533,6 +1534,21 @@ struct smb2_file_alloc_info {
 struct smb2_file_disposition_info {
 	__u8 DeletePending;
 } __packed;
+
+/* Flags for FILE_DISPOSITION_INFORMATION_EX (class 64) */
+#define FILE_DISPOSITION_DELETE				cpu_to_le32(0x00000001)
+#define FILE_DISPOSITION_POSIX_SEMANTICS		cpu_to_le32(0x00000002)
+#define FILE_DISPOSITION_FORCE_IMAGE_SECTION_CHECK	cpu_to_le32(0x00000004)
+#define FILE_DISPOSITION_ON_CLOSE			cpu_to_le32(0x00000008)
+#define FILE_DISPOSITION_IGNORE_READONLY_ATTRIBUTE	cpu_to_le32(0x00000010)
+
+struct smb2_file_disposition_info_ex {
+	__le32 Flags;
+} __packed; /* level 64 Set */
+
+struct smb2_file_valid_data_length_info {
+	__le64 ValidDataLength;
+} __packed; /* level 39 Set */
 
 struct smb2_file_pos_info {
 	__le64 CurrentByteOffset;

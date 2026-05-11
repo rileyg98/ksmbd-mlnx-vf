@@ -6914,6 +6914,95 @@ static int set_file_mode_info(struct ksmbd_file *fp,
 }
 
 /**
+ * set_file_valid_data_length_info() - handler for FileValidDataLengthInformation (class 39)
+ * @work:	smb work
+ * @fp:		ksmbd_file pointer
+ * @info:	wire buffer with ValidDataLength
+ *
+ * Advances the "valid data length" of the file by pre-allocating blocks up to
+ * the requested offset. Required by Veeam and other backup agents that
+ * pre-allocate large files and then stream data into them without wanting the
+ * OS to zero-fill on every write.
+ *
+ * Linux has no direct VDL primitive; we map it to fallocate(KEEP_SIZE) so that
+ * blocks are physically reserved but i_size is not altered. If the fs does not
+ * support fallocate we succeed silently — the semantics are already met because
+ * all bytes up to i_size are readable on Linux.
+ *
+ * Return:	0 on success, otherwise error
+ */
+static int set_file_valid_data_length_info(struct ksmbd_work *work,
+					   struct ksmbd_file *fp,
+					   struct smb2_file_valid_data_length_info *info)
+{
+	loff_t vdl = le64_to_cpu(info->ValidDataLength);
+	struct inode *inode;
+	int rc;
+
+	if (!(fp->daccess & FILE_WRITE_DATA_LE))
+		return -EACCES;
+
+	inode = file_inode(fp->filp);
+	if (S_ISDIR(inode->i_mode))
+		return -EINVAL;
+
+	if (vdl < 0 || vdl > i_size_read(inode))
+		return -EINVAL;
+
+	if (vdl == 0)
+		return 0;
+
+	/*
+	 * Pre-allocate up to VDL without extending i_size.
+	 * Silently accept EOPNOTSUPP — the data is already valid on Linux
+	 * filesystems regardless. Also accept sparse files per Veeam usage.
+	 */
+	smb_break_all_levII_oplock(work, fp, 1);
+	rc = vfs_fallocate(fp->filp, FALLOC_FL_KEEP_SIZE, 0, vdl);
+	if (rc == -EOPNOTSUPP || rc == -EINVAL)
+		rc = 0;
+	return rc;
+}
+
+/**
+ * set_file_disposition_info_ex() - handler for FileDispositionInformationEx (class 64)
+ * @fp:		ksmbd_file pointer
+ * @info:	wire buffer with Flags
+ *
+ * Extended disposition handler supporting additional flags beyond the legacy
+ * FILE_DISPOSITION_INFORMATION (class 13). Currently handles:
+ *   FILE_DISPOSITION_DELETE  – mark/unmark the file for deletion on close
+ *   FILE_DISPOSITION_POSIX_SEMANTICS  – no-op: ksmbd already unlinks on Linux
+ *     semantics (delete-on-close with other handles open is naturally POSIX)
+ *   FILE_DISPOSITION_IGNORE_READONLY_ATTRIBUTE  – not enforced at this layer;
+ *     readonly check is done at open time
+ *
+ * Return:	0 on success, otherwise error
+ */
+static int set_file_disposition_info_ex(struct ksmbd_file *fp,
+					struct smb2_file_disposition_info_ex *info)
+{
+	__le32 flags = info->Flags;
+	struct inode *inode;
+
+	if (!(fp->daccess & FILE_DELETE_LE)) {
+		pr_err("no right to delete : 0x%x\n", fp->daccess);
+		return -EACCES;
+	}
+
+	inode = file_inode(fp->filp);
+	if (flags & FILE_DISPOSITION_DELETE) {
+		if (S_ISDIR(inode->i_mode) &&
+		    ksmbd_vfs_empty_dir(fp) == -ENOTEMPTY)
+			return -EBUSY;
+		ksmbd_set_inode_pending_delete(fp);
+	} else {
+		ksmbd_clear_inode_pending_delete(fp);
+	}
+	return 0;
+}
+
+/**
  * smb2_set_info_file() - handler for smb2 set info command
  * @work:	smb work containing set info command buffer
  * @fp:		ksmbd_file pointer
@@ -7007,6 +7096,30 @@ static int smb2_set_info_file(struct ksmbd_work *work, struct ksmbd_file *fp,
 			return -EMSGSIZE;
 
 		return set_file_mode_info(fp, (struct smb2_file_mode_info *)buffer);
+	}
+	case FILE_VALID_DATA_LENGTH_INFORMATION:
+	{
+		if (buf_len < sizeof(struct smb2_file_valid_data_length_info))
+			return -EMSGSIZE;
+
+		return set_file_valid_data_length_info(work, fp,
+				(struct smb2_file_valid_data_length_info *)buffer);
+	}
+	case FILE_SHORT_NAME_INFORMATION:
+	{
+		/*
+		 * Linux filesystems have no 8.3 short-name concept; return
+		 * STATUS_INVALID_PARAMETER so the client does not retry.
+		 */
+		return -EINVAL;
+	}
+	case FILE_DISPOSITION_INFORMATION_EX:
+	{
+		if (buf_len < sizeof(struct smb2_file_disposition_info_ex))
+			return -EMSGSIZE;
+
+		return set_file_disposition_info_ex(fp,
+				(struct smb2_file_disposition_info_ex *)buffer);
 	}
 	}
 
